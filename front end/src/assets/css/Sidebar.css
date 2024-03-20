@@ -1,0 +1,106 @@
+.sidebar {
+    height: 100vh;
+    width: 250px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background-color: #0c0c0c;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    box-shadow: 2px 0 15px rgba(0, 212, 102, 0.5);
+}
+
+.brand-logo {
+    margin-bottom: 45px;
+    color: #21d07a;
+    text-decoration: none;
+    text-shadow: 0 0 0.75px rgba(0, 255, 0, 0.7), 0 0 1.5px rgba(0, 255, 0, 0.5), 0 0 2.25px rgba(0, 255, 0, 0.3);
+}
+
+.nav-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    text-align: center;
+}
+.py-3 {
+  padding-top: 18rem !important;
+  padding-bottom: 38rem !important;
+}
+.nav-links li {
+    width: 100%;
+}
+
+.nav-links a {
+    display: block;
+    padding: 10px;
+    color: white;
+    text-decoration: none;
+    transition: background 0.3s ease;
+}
+
+.nav-links a:hover {
+    background-color: #1e1e1e;
+}
+
+.nav-links aTrans {
+  display: block;
+  padding: 10px;
+  color: white;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+
+
+.promo-message {
+    margin-top: auto;
+    /* Pushes the promo message to the bottom */
+    text-align: center;
+    color: white;
+    font-size: 0.9rem;
+    padding: 20px;
+}
+
+
+.glow-on-hover:hover {
+  --active: 1; /* Activate the glow */
+}
+
+.glow-on-hover img {
+  /* Apply any necessary styles to the image here */
+  transition: transform 0.3s ease;
+}
+
+.glow-on-hover:hover img {
+  /* This could include transformations, box shadows, etc., to enhance the effect */
+  transform: scale(1.1); /* Example of making the image slightly larger on hover */
+}
+
+
+.sidebar {
+    z-index: 1;
+    /* Ensure sidebar is above main content */
+}
+
+.main-content {
+    margin-left: 250px; /* Sidebar width, keep this to maintain the space for the sidebar */
+    width: calc(100% - 250px); /* Adjust the main content width to avoid going under the sidebar */
+  }
+  
+
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 100vw; /* Example: Make sidebar full width on smaller screens */
+      position: relative;
+    }
+  
+    .main-content {
+      margin-left: 0; /* No margin needed as the sidebar is not beside the content */
+      width: 100%; /* Allow the main content to use the full width */
+    }
+  }
+  
