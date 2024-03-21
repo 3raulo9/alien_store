@@ -45,7 +45,9 @@ const Login = () => {
       <br />
       <br />
       <br />
-      <div style={{ display: "flex", justifyContent: "center" }}> {/* This div centers its children */}
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        {" "}
+        {/* This div centers its children */}
         <p className="LoginIconLayers"></p>
       </div>
       {logged ? (
@@ -54,10 +56,12 @@ const Login = () => {
         </button>
       ) : (
         <div>
+          
+          <div style={{ margin: `${13}px` }}></div>
           {loading && <div className="loader"></div>}{" "}
           <div className="textInputWrapper">
             <input
-              placeholder="USERNAME"
+              placeholder="Username"
               className="textInput"
               required="required"
               type="text"
@@ -67,15 +71,16 @@ const Login = () => {
           </div>
           <div className="textInputWrapper">
             <input
-              placeholder="PASSWORD"
+              placeholder="Password"
               className="textInput"
               required="required"
               type="password"
               onChange={(e) => setPassword(e.target.value)}
               value={password}
             />
-          </div>  <br />
-          <hr className="hr hr-blurry" />{" "}
+          </div>{" "}
+          <div style={{ margin: `${100}px` }}></div>
+          <hr className="hr hr-blurry" />
           <button
             className="buttonSpecial"
             onClick={() => dispatch(doLoginAsync({ username, password }))}

@@ -20,11 +20,15 @@ const RegisterScreen = () => {
 
   return (
     <div className="container">
-            <span className="loader"></span>
+      <span className="loader"></span>
 
       <form onSubmit={handleSubmit} className="form">
-        <p style={{ fontSize: " 70px" }} className="title">Register</p>
-        <p style={{ fontSize: " 30px" }} className="message">Signup now and get full access to our app.</p>
+        <p style={{ fontSize: " 70px" }} className="title">
+          Register
+        </p>
+        <p style={{ fontSize: " 30px" }} className="message">
+          Signup now and get full access to our app.
+        </p>
         <div className="textInputWrapper">
           <br />
           <br />
@@ -57,7 +61,8 @@ const RegisterScreen = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <br /> <hr class="hr hr-blurry" />{" "}
+        <div style={{ margin: `${52}px` }}></div>
+        <hr class="hr hr-blurry" />{" "}
         <button type="submit" className="buttonSpecial">
           Register
         </button>
