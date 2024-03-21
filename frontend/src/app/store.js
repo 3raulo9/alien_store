@@ -6,5 +6,6 @@ export const store = configureStore({
   reducer: {
     // Assuming you have a slice named loginSlice
     login: loginReducer,
+    
   },
 });

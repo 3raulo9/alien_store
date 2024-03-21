@@ -103,24 +103,24 @@ const Sidebar = () => {
           <br />
           <i>REGISTER</i>
         </Link>
-        <li  className="arshop-button">
-          <aTrans onClick={toggleFont} className="glow-on-hover">
-            <i   style={{
-    filter: 'hue-rotate(20deg) saturate(90%)',
-  }}>
+        <li className="arshop-button">
+          <atrans onClick={toggleFont} className="glow-on-hover">
+            <i
+              style={{
+                filter: "hue-rotate(20deg) saturate(90%)",
+              }}
+            >
               <img
                 src="/images/translation.gif"
                 alt="Language Icon"
-                style={imgStyle }
-                
+                style={imgStyle}
                 className="shadow-pop-tr"
               />
               <br />
               TRANSLATE
             </i>
-          </aTrans>
+          </atrans>
         </li>
-        
       </ul>
       <div className="promo-message">
         FOR A LIMITED TIME, ALL ORDERS WILL ENJOY FREE SHIPPING TO PROXIMA

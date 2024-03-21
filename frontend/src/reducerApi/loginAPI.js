@@ -12,5 +12,12 @@ export function fetchLogin(credentials) {
 
 // Function to perform logout
 export function fetchLogout(refreshToken) {
-    return axios.post(LOGOUT_API, { refresh_token: refreshToken });
+    // Assume you store the access token in localStorage or another secure place
+    const accessToken = localStorage.getItem('accessToken');
+    return axios.post(LOGOUT_API, { refresh_token: refreshToken }, {
+        headers: {
+            // Include the Authorization header with the access token
+            Authorization: `Bearer ${accessToken}`
+        }
+    });
 }

@@ -1,8 +1,15 @@
+
+
+
+
+
+
+
 .textInputWrapper {
   position: relative;
-  width: 180px;
-  margin: 12px 5px;
-  --accent-color: rgb(33	, 208	, 122);
+  width: 320px; /* Increased width for even larger fields */
+  margin: 12px auto; /* Centering horizontally */
+  --accent-color: rgb(33, 208, 122);
 }
 
 .textInputWrapper:before {
@@ -89,3 +96,4 @@
 .textInputWrapper:focus-within .textInput::placeholder {
   opacity: 0;
 }
+

@@ -4,7 +4,7 @@ import Footer from "./components/Footer";
 import Sidebar from "./components/Sidebar";
 
 import HomeScreen from "./screens/HomeScreen";
-import Register from "./screens/Register";
+import RegisterScreen from "./screens/RegisterScreen";
 import ProductScreen from "./screens/ProductScreen";
 
 import Login from "./screens/Login";
@@ -20,7 +20,7 @@ function App() {
             <Routes>
               <Route path="/" element={<HomeScreen />} exact />
               <Route path="/login" element={<Login />}  />
-              <Route path="/register" element={<Register />} />
+              <Route path="/register" element={<RegisterScreen />} />
               <Route path="/product/:id" element={<ProductScreen />} />
               {/* Additional routes as needed */}
             </Routes>

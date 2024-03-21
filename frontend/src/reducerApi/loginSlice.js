@@ -1,38 +1,32 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchLogin } from './loginAPI';
-import axios from 'axios';
+import { fetchLogin, fetchLogout } from './loginAPI'; // Make sure to import fetchLogout
 
 const initialState = {
+  loading: false,
   logged: false,
   Token: ''
 };
 
 export const doLoginAsync = createAsyncThunk(
   'login/fetchLogin',
-  async (credentials) => {
-    const response = await fetchLogin(credentials);
-    // Assuming the API response structure has an 'access' property for the access token
-    return response.data.access;
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const response = await fetchLogin(credentials);
+      // Assuming the API response structure has an 'access' property for the access token
+      return response.data.access;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
   }
 );
 
-// Define the thunk for the logout functionality
 export const doLogout = createAsyncThunk(
   'login/doLogout',
   async (_, { getState, rejectWithValue }) => {
     try {
       const state = getState();
-      // Get the correct token that needs to be sent for logout
-      const refreshToken = state.login.refreshToken; // Make sure you store and reference the correct token
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/logout/",
-        {},
-        {
-          headers: {
-            'Authorization': `Bearer ${refreshToken}` // Ensure this is how your backend expects the token
-          }
-        }
-      );
+      const refreshToken = state.login.Token; // Make sure this correctly refers to your refresh token
+      const response = await fetchLogout(refreshToken); // Correctly calling fetchLogout here
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -40,40 +34,52 @@ export const doLogout = createAsyncThunk(
   }
 );
 
-
-
 export const loginSlice = createSlice({
   name: 'login',
   initialState,
   reducers: {
-    // Define a reducer for resetting state that can be used for synchronous logout if needed
+    // Reducer to reset the state
     reset: (state) => {
       state.Token = '';
       state.logged = false;
+      state.loading = false;
     },
   },
   extraReducers: (builder) => {
     builder
+      .addCase(doLoginAsync.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(doLoginAsync.fulfilled, (state, action) => {
         state.Token = action.payload;
         state.logged = true;
+        state.loading = false;
+      })
+      .addCase(doLoginAsync.rejected, (state, action) => {
+        state.loading = false;
+        // You may want to handle the error state here
+      })
+      .addCase(doLogout.pending, (state) => {
+        state.loading = true;
       })
       .addCase(doLogout.fulfilled, (state) => {
         state.Token = '';
         state.logged = false;
-        localStorage.removeItem('accessToken'); // Clear access token from local storage
-        localStorage.removeItem('refreshToken'); // Clear refresh token from local storage
+        state.loading = false;
+        localStorage.removeItem('accessToken'); // Assuming you're storing the access token here
+        localStorage.removeItem('refreshToken'); // And the refresh token here
       })
-      // Handle other cases such as pending or rejected if necessary
+      .addCase(doLogout.rejected, (state, action) => {
+        state.loading = false;
+        // You may want to handle the error state here
+      });
   },
 });
 
-// Export the synchronous reset action
 export const { reset } = loginSlice.actions;
 
-// Export the selectors
 export const selectToken = (state) => state.login.Token;
 export const selectLogged = (state) => state.login.logged;
+export const selectLoading = (state) => state.login.loading;
 
-// Export the reducer
 export default loginSlice.reducer;

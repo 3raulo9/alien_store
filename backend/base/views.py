@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from .products import products
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -48,18 +49,28 @@ def index(req):
 def about(req):
     return HttpResponse("about")
 
-# register
+
 @api_view(['POST'])
 def register(request):
-    user = User.objects.create_user(
-                username=request.data['username'],
-                email=request.data['email'],
-                password=request.data['password']
-            )
-    user.is_active = True
-    user.is_staff = True
-    user.save()
-    return Response("new user born")
+    try:
+        user = User.objects.create_user(
+            username=request.data['username'],
+            email=request.data['email'],
+            password=request.data['password']
+        )
+        user.is_active = True
+        user.is_staff = False  # Be cautious about automatically making users staff.
+        user.save()
+
+        # Generate tokens for the newly created user
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        })
+    except Exception as e:
+        return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET'])
 def getProducts(req):
