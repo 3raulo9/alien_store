@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   doLoginAsync,
-  selectLogged,
-  selectToken,
   doLogout,
+  selectUser,
+  selectLogged,
   selectLoading,
 } from "../reducerApi/loginSlice";
 
@@ -13,19 +13,17 @@ import "../assets/css/Forms.css";
 import "../assets/css/ButtonForAll.css";
 import "../assets/css/icons/LoginIconLayers.css";
 
-import { Row, Col } from "react-bootstrap";
-import Loader from "../components/Loader"; // Make sure you have a Loader component
+import { Col } from "react-bootstrap";
+import Loader from "../components/Loader";
 
 const Login = () => {
   const logged = useSelector(selectLogged);
   const loading = useSelector(selectLoading);
-  const token = useSelector(selectToken);
+  const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState();
 
-  const handleSubmit = async (e) => {};
   const handleLogin = () => {
     dispatch(doLoginAsync({ username, password }));
   };
@@ -35,28 +33,36 @@ const Login = () => {
   };
 
   if (loading) {
-    return <Loader />; // Or show it in a way that doesn't replace the whole form
+    return <Loader />;
   }
 
   return (
     <div>
-      {loading && <div className="loader"></div>}
-      <Col style={{ fontSize: " 70px" }}>Login</Col>
-      <br />
-      <br />
-      <br />
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        {" "}
-        {/* This div centers its children */}
-        <p className="LoginIconLayers"></p>
-      </div>
       {logged ? (
-        <button className="ButtonForAll" onClick={() => dispatch(doLogout())}>
-          LOG OUT
-        </button>
+        <div>
+          <Col style={{ fontSize: " 70px" }}>Hey user {user.name}</Col>
+          <div style={{ margin: `${87}px` }}></div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <p className="LoginIconLayers"></p>
+          </div>
+          <div style={{ margin: `${43}px` }}></div>
+          <hr className="hr hr-blurry" />{" "}
+          
+          <button
+            className="buttonSpecial"
+            onClick={handleLogout}
+          >
+            LOG OUT
+          </button>
+          
+        </div>
       ) : (
         <div>
-          
+          <Col style={{ fontSize: " 70px" }}>Login</Col>
+          <div style={{ margin: `${87}px` }}></div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <p className="LoginIconLayers"></p>
+          </div>
           <div style={{ margin: `${13}px` }}></div>
           {loading && <div className="loader"></div>}{" "}
           <div className="textInputWrapper">
@@ -83,7 +89,7 @@ const Login = () => {
           <hr className="hr hr-blurry" />
           <button
             className="buttonSpecial"
-            onClick={() => dispatch(doLoginAsync({ username, password }))}
+            onClick={handleLogin}
           >
             Log In
           </button>

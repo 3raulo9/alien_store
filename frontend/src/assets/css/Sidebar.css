@@ -9,7 +9,7 @@
     flex-direction: column;
     align-items: center;
     padding-top: 20px;
-    box-shadow: 2px 0 15px rgba(0, 212, 102, 0.5);
+    box-shadow: 2px 0 15px #21d07b;
 }
 
 .brand-logo {
@@ -44,14 +44,6 @@
 
 .nav-links a:hover {
     background-color: #1e1e1e;
-}
-
-.nav-links atrans {
-  display: block;
-  padding: 10px;
-  color: white;
-  text-decoration: none;
-  transition: background 0.3s ease;
 }
 
 

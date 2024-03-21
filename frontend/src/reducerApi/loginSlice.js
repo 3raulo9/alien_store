@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchLogin, fetchLogout } from './loginAPI'; // Make sure to import fetchLogout
+import { fetchLogin, fetchLogout } from './loginAPI'; 
 
 const initialState = {
   loading: false,
   logged: false,
-  Token: ''
+  Token: '',
+  user: null,
 };
 
 export const doLoginAsync = createAsyncThunk(
@@ -12,8 +13,7 @@ export const doLoginAsync = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await fetchLogin(credentials);
-      // Assuming the API response structure has an 'access' property for the access token
-      return response.data.access;
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -25,8 +25,8 @@ export const doLogout = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     try {
       const state = getState();
-      const refreshToken = state.login.Token; // Make sure this correctly refers to your refresh token
-      const response = await fetchLogout(refreshToken); // Correctly calling fetchLogout here
+      const refreshToken = state.login.Token;
+      const response = await fetchLogout(refreshToken);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -38,11 +38,11 @@ export const loginSlice = createSlice({
   name: 'login',
   initialState,
   reducers: {
-    // Reducer to reset the state
     reset: (state) => {
       state.Token = '';
       state.logged = false;
       state.loading = false;
+      state.user = null;
     },
   },
   extraReducers: (builder) => {
@@ -51,13 +51,14 @@ export const loginSlice = createSlice({
         state.loading = true;
       })
       .addCase(doLoginAsync.fulfilled, (state, action) => {
-        state.Token = action.payload;
+        state.Token = action.payload.access;
         state.logged = true;
         state.loading = false;
+        state.user = action.payload.user;
+        localStorage.setItem('accessToken', action.payload.access);
       })
       .addCase(doLoginAsync.rejected, (state, action) => {
         state.loading = false;
-        // You may want to handle the error state here
       })
       .addCase(doLogout.pending, (state) => {
         state.loading = true;
@@ -66,20 +67,20 @@ export const loginSlice = createSlice({
         state.Token = '';
         state.logged = false;
         state.loading = false;
-        localStorage.removeItem('accessToken'); // Assuming you're storing the access token here
-        localStorage.removeItem('refreshToken'); // And the refresh token here
+        state.user = null;
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
       })
       .addCase(doLogout.rejected, (state, action) => {
         state.loading = false;
-        // You may want to handle the error state here
       });
   },
 });
 
 export const { reset } = loginSlice.actions;
 
-export const selectToken = (state) => state.login.Token;
-export const selectLogged = (state) => state.login.logged;
-export const selectLoading = (state) => state.login.loading;
+export const selectUser = (state) => state.login.user;
+export const selectLogged = (state) => state.login.logged; // Export selectLogged selector
+export const selectLoading = (state) => state.login.loading; // Export selectLoading selector
 
 export default loginSlice.reducer;

@@ -35,7 +35,7 @@ const RegisterScreen = () => {
           <input
             required=""
             placeholder="Username"
-            type="email"
+            type="text"
             className="textInput"
             value={username}
             onChange={(e) => setUsername(e.target.value)}

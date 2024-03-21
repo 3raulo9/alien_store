@@ -43,10 +43,10 @@ const Sidebar = () => {
 
   return (
     <div className="sidebar">
-      <div class="lines">
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
+      <div className="lines">
+        <div className="line"></div>
+        <div className="line"></div>
+        <div className="line"></div>
       </div>
 
       <Link
@@ -104,7 +104,9 @@ const Sidebar = () => {
           <i>REGISTER</i>
         </Link>
         <li className="arshop-button">
-          <atrans onClick={toggleFont} className="glow-on-hover">
+          <p onClick={toggleFont} className="glow-on-hover">
+          <div style={{ margin: `${30}px` }}></div>
+
             <i
               style={{
                 filter: "hue-rotate(20deg) saturate(90%)",
@@ -119,7 +121,7 @@ const Sidebar = () => {
               <br />
               TRANSLATE
             </i>
-          </atrans>
+          </p>
         </li>
       </ul>
       <div className="promo-message">
