@@ -22,13 +22,13 @@ const Sidebar = () => {
   const toggleFont = () => {
     const fontFamilies = [
       "OuterRimAf-d9Kq7",
+      "Anta",
       "Narcotix-lPJX",
       "KitisakkullianAf-ALWnx",
       "alien",
       "Wingdings, sans-serif",
       "Zdyk Sagittarius",
       "ex-kata2",
-      "Anta",
       "Mage Script",
       "AlienAlphabet-nRRqJ",
       "ex-hira1",

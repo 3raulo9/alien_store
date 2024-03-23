@@ -1,9 +1,11 @@
+// loginAPI.js
+
 import axios from 'axios';
 
 // Endpoint for login
-const LOGIN_API = "http://127.0.0.1:8000/api/login/";
+const LOGIN_API = "/api/login/";
 // Endpoint for logout - adjust this if your endpoint is different
-const LOGOUT_API = "http://127.0.0.1:8000/api/logout/";
+const LOGOUT_API = "/api/logout/";
 
 export function fetchLogin(credentials) {
     return axios.post(LOGIN_API, credentials, {
@@ -12,7 +14,6 @@ export function fetchLogin(credentials) {
         },
     });
 }
-
 
 // Function to perform logout
 export function fetchLogout(refreshToken) {

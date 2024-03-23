@@ -1,3 +1,4 @@
+// screens/Login.js
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -40,7 +41,8 @@ const Login = () => {
     <div>
       {logged ? (
         <div>
-          <Col style={{ fontSize: " 70px" }}>Hey user {user.name}</Col>
+          <Col style={{ fontSize: " 70px" }}>Hey user {user?.name}</Col>
+
           <div style={{ margin: `${87}px` }}></div>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <p className="LoginIconLayers"></p>
