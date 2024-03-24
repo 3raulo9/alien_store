@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { register } from "../reducerApi/registerSlice";
+
 import "../assets/css/Forms.css";
 import "../assets/css/ButtonForAll.css";
 import "../assets/css/Loader.css";
 
-import { Link } from "react-router-dom";
+import { Link,  useNavigate  } from "react-router-dom";
 
 const RegisterScreen = () => {
   const [username, setUsername] = useState("");
@@ -13,11 +14,23 @@ const RegisterScreen = () => {
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    dispatch(register({ username, email, password }));
-  };
+  const navigate = useNavigate();
 
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Dispatch the register action and wait for it to finish
+    const actionResult = await dispatch(register({ username, email, password }));
+    
+    // Check if the register action was successful
+    if (register.fulfilled.match(actionResult)) {
+      // Redirect to the login page
+      navigate('/login');
+    }
+    // You could also handle redirection in case of failure or display an error message
+  };
+  
   return (
     <div className="container">
       <span className="loader"></span>
