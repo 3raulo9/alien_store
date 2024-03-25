@@ -1,14 +1,32 @@
 main {
   min-height: 100vh;
-  background-color: #121212;
-  /* Dark background color */
   color: #21d07a;
   /* Bright green text color */
   text-align: center;
   padding: 10px 0;
   font-size: 1.2em;
 }
+body {
+  background-image: linear-gradient(#0c0c0c 26%, #08301c 48%, #121212 73%);
+  animation: unicorn-slide 5s ease infinite; /* Adjusted duration to 5s */
+  background-size: 200% 200%;
+}
 
+@keyframes unicorn-slide {
+  0% { background-position: 0% 50% }
+  50% { background-position: 100% 50% }
+  100% { background-position: 0% 50% }
+}
+
+@-webkit-keyframes unicorn-slide {
+  0% { background-position: 0% 50% }
+  50% { background-position: 100% 50% }
+  100% { background-position: 0% 50% }
+}
+
+
+
+   
 h3 {
   padding: 1rem 0;
 }

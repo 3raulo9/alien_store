@@ -9,8 +9,14 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth.models import User
-from .products import products
+
 from rest_framework import status
+
+from .models import Product
+from .serializers import ProductSerializer
+
+
+from googletrans import Translator
 
 
 @api_view(['POST'])
@@ -76,14 +82,36 @@ def register(request):
 
 @api_view(['GET'])
 def getProducts(req):
-    return Response(products)
+    products = Product.objects.all()
+    serializer = ProductSerializer(products, many=True)
+    return Response(serializer.data)
 
 
 @api_view(['GET'])
 def getProduct(req, pk):
-    product= None
-    for i in products:
-        if i["_id"] == pk:
-            product = i
-            break
-    return Response(product)
+    product = Product.objects.get(_id=pk)
+    serializer = ProductSerializer(product, many=False)
+
+    return Response(serializer.data)
+
+
+
+
+selected_language = 'fr'  # Default language
+
+@api_view(['POST'])
+def translate(request):
+    global selected_language
+    
+    if request.method == "POST":
+        data = request.data
+        your_sentence = data.get("input_text")
+        selected_language = data.get('language', 'fr')  # Get the selected language from the request
+
+        translator = Translator()
+        translation = translator.translate(your_sentence, dest=selected_language)
+        translated_text = translation.text
+
+        return Response({'translated_text': translated_text, 'selected_language': selected_language})
+    return Response({'error': "No text received"}, status=status.HTTP_400_BAD_REQUEST)
+

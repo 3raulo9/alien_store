@@ -1,45 +1,15 @@
-import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../assets/css/Sidebar.css"; // Reference to the new CSS for sidebar
+import TranslatorButton from '../components/TranslatorButton'
 
 const Sidebar = () => {
-  const [fontFamily, setFontFamily] = useState("OuterRimAf-d9Kq7");
-  const imgStyle = {
-    width: "90px", // Adjust width as desired
-    height: "80px", // Adjust height as desired
-    objectFit: "contain", // Preserve aspect ratio without stretching
-  };
   const lordIconStyle = {
     width: "60px",
     height: "60px",
 
     // additional properties specific to lord-icon can go here
   };
-  useEffect(() => {
-    document.body.style.fontFamily = fontFamily;
-  }, [fontFamily]);
-
-  const toggleFont = () => {
-    const fontFamilies = [
-      "OuterRimAf-d9Kq7",
-      "Anta",
-      "Narcotix-lPJX",
-      "KitisakkullianAf-ALWnx",
-      "alien",
-      "Wingdings, sans-serif",
-      "Zdyk Sagittarius",
-      "ex-kata2",
-      "Mage Script",
-      "AlienAlphabet-nRRqJ",
-      "ex-hira1",
-      "electroharmonix",
-      "nyamawemban",
-      "kremlin",
-    ];
-    const currentFontIndex = fontFamilies.indexOf(fontFamily);
-    const nextFontIndex = (currentFontIndex + 1) % fontFamilies.length;
-    setFontFamily(fontFamilies[nextFontIndex]);
-  };
+  
 
   return (
     <div className="sidebar">
@@ -103,27 +73,11 @@ const Sidebar = () => {
           <br />
           <i>REGISTER</i>
         </Link>
-        <li className="arshop-button">
-          <p onClick={toggleFont} className="glow-on-hover">
-          <div style={{ margin: `${30}px` }}></div>
+        <TranslatorButton />
 
-            <i
-              style={{
-                filter: "hue-rotate(20deg) saturate(90%)",
-              }}
-            >
-              <img
-                src="/images/translation.gif"
-                alt="Language Icon"
-                style={imgStyle}
-                className="shadow-pop-tr"
-              />
-              <br />
-              TRANSLATE
-            </i>
-          </p>
-        </li>
+
       </ul>
+
       <div className="promo-message">
         FOR A LIMITED TIME, ALL ORDERS WILL ENJOY FREE SHIPPING TO PROXIMA
         CENTAURI. SHOP NOW

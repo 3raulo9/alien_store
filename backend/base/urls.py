@@ -1,4 +1,3 @@
-from django.contrib import admin
 from django.urls import path
 from . import views
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -12,4 +11,6 @@ urlpatterns = [
     path("login/", MyTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("logout/", views.logout, name="logout"),
     path("register/", views.register),
+    
+    path("translate/", views.translate, name="translate"),
 ]
