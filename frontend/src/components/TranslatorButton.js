@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import "../assets/css/Sidebar.css"; // Reference to the new CSS for sidebar
+import axios from 'axios';
 
 const TranslatorButton = () => {
-  const [fontFamily, setFontFamily] = useState("OuterRimAf-d9Kq7");
+  const [fontFamily, setFontFamily] = useState("Anta");
   const [showTranslateDropdown, setShowTranslateDropdown] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("fr");
 
   const toggleTranslateDropdown = () => {
     setShowTranslateDropdown(!showTranslateDropdown);
@@ -15,30 +16,51 @@ const TranslatorButton = () => {
 
   const toggleFont = () => {
     const fontFamilies = [
-      "OuterRimAf-d9Kq7",
       "Anta",
-      "Narcotix-lPJX",
+      "OuterRimAf-d9Kq7",
       "KitisakkullianAf-ALWnx",
       "alien",
       "Wingdings, sans-serif",
       "Zdyk Sagittarius",
-      "ex-kata2",
       "Mage Script",
       "AlienAlphabet-nRRqJ",
-      "ex-hira1",
-      "electroharmonix",
       "nyamawemban",
-      "kremlin",
     ];
     const currentFontIndex = fontFamilies.indexOf(fontFamily);
     const nextFontIndex = (currentFontIndex + 1) % fontFamilies.length;
     setFontFamily(fontFamilies[nextFontIndex]);
   };
 
+  const handleTranslation = () => {
+    // Recursively translate text content of all nodes in the DOM tree
+    translateDOM(document.body);
+  };
+
+  const translateDOM = (node) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      // Translate text content of text nodes
+      translateTextNode(node);
+    } else {
+      // Recursively translate child nodes of non-text nodes
+      node.childNodes.forEach(childNode => translateDOM(childNode));
+    }
+  };
+
+  const translateTextNode = (node) => {
+    const originalText = node.textContent.trim();
+    axios.post('/api/translate/', { input_text: originalText, language: selectedLanguage })
+      .then(response => {
+        const translatedText = response.data.translated_text;
+        node.textContent = translatedText; // Update text content with translated text
+      })
+      .catch(error => {
+        console.error('Error translating text:', error);
+      });
+  };
+
   // Define imgStyle for the image
   const imgStyle = {
     filter: "hue-rotate(20deg) saturate(90%)",
-
     width: "90px",
     height: "80px",
     objectFit: "contain",
@@ -74,20 +96,29 @@ const TranslatorButton = () => {
                 style={{ backgroundColor: "#0c0c0c" }}
                 onClick={toggleFont}
               >
-                Alien Language
+                Alien Languages
               </a>
             </li>
             <li>
               <div className="form-group" style={{ display: "flex" }}>
                 <label htmlFor="exampleDropdownFormEmail1"></label>
-                <input className="form-control" placeholder="Human lang" />
+                <input
+                  className="form-control"
+                  placeholder="Human lang"
+                  value={selectedLanguage}
+                  onChange={(e) => setSelectedLanguage(e.target.value)}
+                />
                 <button
                   className="btn btn-primary"
                   style={{ marginLeft: "5px" }}
+                  onClick={handleTranslation}
                 >
                   <i className="fa-solid fa-arrow-up"></i>{" "}
                 </button>
               </div>
+              <p>
+            please enter a human language name to translate the page
+          </p>
             </li>
           </ul>
           <i
@@ -99,6 +130,7 @@ const TranslatorButton = () => {
           >
             Translator
           </i>
+
         </div>
       </p>
     </li>

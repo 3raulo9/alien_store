@@ -18,19 +18,13 @@ from .serializers import ProductSerializer
 
 from googletrans import Translator
 
+from django.contrib.auth import logout
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def logout(request):
-    try:
-        # Get the refresh token from request data
-        refresh_token = request.data.get('refresh_token')
-        token = RefreshToken(refresh_token)
-        # Attempt to blacklist the given token
-        token.blacklist()
-        return Response(status=status.HTTP_205_RESET_CONTENT)
-    except Exception as e:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+def logout_view(request):
+    logout(request)
+    return Response('User logout')
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod

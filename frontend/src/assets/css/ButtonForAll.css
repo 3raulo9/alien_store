@@ -4,7 +4,7 @@
     padding: 10px 24px;
     font-size: 18px;
     color: rgb(136, 136, 136);
-    border: 2px solid rgb(0, 0, 0);
+    border: 2px solid rgba(0, 0, 0, 0);
     border-radius: 34px;
     background-color: rgb(255, 255, 255);
     font-weight: 600;
@@ -33,7 +33,7 @@
 
 .buttonSpecial:hover {
     
-    color: #212121;
+    color: #ffffff;
     scale: 1.1;
     box-shadow: 0 0px 20px rgba(193, 163, 98, 0.4);
 }

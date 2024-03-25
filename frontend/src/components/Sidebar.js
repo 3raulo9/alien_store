@@ -62,12 +62,13 @@ const Sidebar = () => {
           <br />
           <i>LOGIN</i>
         </Link>
-        <Link to="/register">
+        <Link to="/register" >
           <lord-icon
             style={lordIconStyle}
             src="https://cdn.lordicon.com/wzwygmng.json"
-            trigger="hover"
             stroke="bold"
+            trigger="hover"
+
             colors="primary:#ffffff,secondary:#21d07a"
           ></lord-icon>
           <br />
