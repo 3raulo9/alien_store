@@ -3,10 +3,11 @@ import { fetchLogin, fetchLogout } from './loginAPI';
 
 const initialState = {
   loading: false,
-  logged: false,
-  Token: '',
-  user: null,
+  logged: localStorage.getItem('accessToken') ? true : false,
+  Token: localStorage.getItem('accessToken') || '',
+  user: null, // You'll probably want to handle user info in a similar way
 };
+
 
 export const doLoginAsync = createAsyncThunk(
   'login/fetchLogin',
