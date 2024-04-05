@@ -1,5 +1,5 @@
 import React from "react";
-import "../assets/css//Loader.css"; // Assume you have some CSS for animation
+import "../assets/css/Loader.css"; // Assume you have some CSS for animation
 
 const Loader = () => {
   return (

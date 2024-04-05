@@ -11,9 +11,9 @@ const Sidebar = () => {
   const navigate = useNavigate();
 
   const handleProfileClick = () => {
-    navigate('/profile'); // Navigate to the profile page
+    navigate("/profile"); // Navigate to the profile page
   };
-  
+
   const lordIconStyle = {
     width: "60px",
     height: "60px",
@@ -50,14 +50,16 @@ const Sidebar = () => {
       <ul className="nav-links">
         <li>
           <Link to="/cart">
-            <lord-icon
-              style={lordIconStyle}
-              src="https://cdn.lordicon.com/odavpkmb.json"
-              trigger="hover"
-              colors="primary:#ffffff,secondary:#21d07a"
-            ></lord-icon>
-            <br />
-            <i>CART</i>
+            <li className="hover-effect">
+              <lord-icon
+                style={lordIconStyle}
+                src="https://cdn.lordicon.com/odavpkmb.json"
+                trigger="hover"
+                colors="primary:#ffffff,secondary:#21d07a"
+              ></lord-icon>
+              <div style={{ margin: `${5}px` }}></div>
+              <i>CART</i>
+            </li>
           </Link>
         </li>
 
@@ -66,56 +68,62 @@ const Sidebar = () => {
           <>
             <li>
               <Link to="/login">
-                <lord-icon
-                  style={lordIconStyle}
-                  src="https://cdn.lordicon.com/uecgmesg.json"
-                  trigger="hover"
-                  colors="primary:#ffffff,secondary:#21d07a"
-                  state="hover-squeeze"
-                ></lord-icon>
-                <br />
-                <i>LOGIN</i>
+                <li className="hover-effect">
+                  <lord-icon
+                    style={lordIconStyle}
+                    src="https://cdn.lordicon.com/uecgmesg.json"
+                    trigger="hover"
+                    colors="primary:#ffffff,secondary:#21d07a"
+                    state="hover-squeeze"
+                  ></lord-icon>
+                  <div style={{ margin: `${5}px` }}></div>
+                  <i>LOGIN</i>
+                </li>
               </Link>
             </li>
             <li>
               <Link to="/register">
-                <lord-icon
-                  style={lordIconStyle}
-                  src="https://cdn.lordicon.com/wzwygmng.json"
-                  trigger="hover"
-                  colors="primary:#ffffff,secondary:#21d07a"
-                ></lord-icon>
-                <br />
-                <i>REGISTER</i>
+                <li className="hover-effect">
+                  <lord-icon
+                    style={lordIconStyle}
+                    src="https://cdn.lordicon.com/wzwygmng.json"
+                    trigger="hover"
+                    colors="primary:#ffffff,secondary:#21d07a"
+                  ></lord-icon>
+                  <div style={{ margin: `${5}px` }}></div>
+                  <i>REGISTER</i>
+                </li>
               </Link>
             </li>
           </>
         ) : (
           <ul className="nav-links">
-            <li>
-              <button onClick={handleProfileClick} style={{ all: "unset" }}>
+            <Link to="/profile">
+              <li className="hover-effect">
                 <lord-icon
                   style={lordIconStyle}
                   src="https://cdn.lordicon.com/kzrjvkoe.json"
-                  trigger="hover"
                   colors="primary:#ffffff,secondary:#21d07a"
+                  trigger="hover"
+
                 ></lord-icon>
-                <br />
+                <div style={{ margin: `${5}px` }}></div>
                 <i>Profile</i>
-              </button>
-            </li>
-            <li>
-              <button onClick={handleLogout} style={{ all: "unset" }}>
+              </li>
+            </Link>
+
+            <Link onClick={handleLogout}>
+              <li className="hover-effect">
                 <lord-icon
                   style={lordIconStyle}
                   src="https://cdn.lordicon.com/rljrflzd.json"
                   trigger="hover"
                   colors="primary:#ffffff,secondary:#21d07a"
                 ></lord-icon>
-                <br />
+                <div style={{ margin: `${5}px` }}></div>
                 <i>LOGOUT</i>
-              </button>
-            </li>
+              </li>
+            </Link>
           </ul>
         )}
 
