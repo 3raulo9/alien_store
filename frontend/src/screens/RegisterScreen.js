@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { register } from "../reducerApi/registerSlice";
+import { register } from "../reducers/registerSlice";
 
 import "../assets/css/Forms.css";
 import "../assets/css/ButtonForAll.css";

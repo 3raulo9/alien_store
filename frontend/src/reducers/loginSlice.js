@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchLogin, fetchLogout } from './loginAPI'; 
+import { fetchLogin, fetchLogout } from '../APIS/loginAPI'; 
 
 const initialState = {
   loading: false,

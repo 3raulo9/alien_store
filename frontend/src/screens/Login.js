@@ -7,7 +7,7 @@ import {
   selectUser,
   selectLogged,
   selectLoading,
-} from "../reducerApi/loginSlice";
+} from "../reducers/loginSlice";
 
 // STYLES AND ICONS
 import "../assets/css/Forms.css";

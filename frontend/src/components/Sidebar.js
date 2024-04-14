@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { selectLogged, doLogout } from "../reducerApi/loginSlice"; // Adjust this import based on where your login slice is located
+import { selectLogged, doLogout } from "../reducers/loginSlice"; // Adjust this import based on where your login slice is located
 import "../assets/css/Sidebar.css";
 import TranslatorButton from "../components/TranslatorButton";
 
