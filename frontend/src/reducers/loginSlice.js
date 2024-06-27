@@ -1,5 +1,7 @@
+// src/slices/loginSlice.js
+
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { fetchLogin, fetchLogout } from '../APIS/loginAPI'; 
+import { fetchLogin, fetchLogout } from '../APIS/loginAPI';
 
 const initialState = {
   loading: false,
@@ -7,7 +9,6 @@ const initialState = {
   Token: localStorage.getItem('accessToken') || '',
   user: null, // You'll probably want to handle user info in a similar way
 };
-
 
 export const doLoginAsync = createAsyncThunk(
   'login/fetchLogin',
@@ -44,6 +45,8 @@ export const loginSlice = createSlice({
       state.logged = false;
       state.loading = false;
       state.user = null;
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
     },
   },
   extraReducers: (builder) => {
@@ -80,8 +83,9 @@ export const loginSlice = createSlice({
 
 export const { reset } = loginSlice.actions;
 
+export const selectToken = (state) => state.login.Token;
+export const selectLogged = (state) => state.login.logged;
+export const selectLoading = (state) => state.login.loading;
 export const selectUser = (state) => state.login.user;
-export const selectLogged = (state) => state.login.logged; // Export selectLogged selector
-export const selectLoading = (state) => state.login.loading; // Export selectLoading selector
 
 export default loginSlice.reducer;

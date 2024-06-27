@@ -1,21 +1,20 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { register } from "../reducers/registerSlice";
+import { doLoginAsync } from "../reducers/loginSlice";
 
 import "../assets/css/Forms.css";
 import "../assets/css/ButtonForAll.css";
 import "../assets/css/Loader.css";
 
-import { Link,  useNavigate  } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const RegisterScreen = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
-
   const navigate = useNavigate();
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,10 +24,21 @@ const RegisterScreen = () => {
     
     // Check if the register action was successful
     if (register.fulfilled.match(actionResult)) {
-      // Redirect to the login page
-      navigate('/login');
+      // Dispatch the login action
+      const loginResult = await dispatch(doLoginAsync({ username, password }));
+
+      // Check if the login action was successful
+      if (doLoginAsync.fulfilled.match(loginResult)) {
+        // Redirect to the home page
+        navigate('/');
+      } else {
+        // Handle login failure (e.g., show an error message)
+        console.error("Login failed after registration");
+      }
+    } else {
+      // Handle registration failure (e.g., show an error message)
+      console.error("Registration failed");
     }
-    // You could also handle redirection in case of failure or display an error message
   };
   
   return (
@@ -36,10 +46,10 @@ const RegisterScreen = () => {
       <span className="loader"></span>
 
       <form onSubmit={handleSubmit} className="form">
-        <p style={{ fontSize: " 70px" }} className="title">
+        <p style={{ fontSize: "70px" }} className="title">
           Register
         </p>
-        <p style={{ fontSize: " 30px" }} className="message">
+        <p style={{ fontSize: "30px" }} className="message">
           Signup now and get full access to our app.
         </p>
         <div className="textInputWrapper">
@@ -75,7 +85,7 @@ const RegisterScreen = () => {
           />
         </div>
         <div style={{ margin: `${52}px` }}></div>
-        <hr class="hr hr-blurry" />{" "}
+        <hr className="hr hr-blurry" />{" "}
         <button type="submit" className="buttonSpecial">
           Register
         </button>

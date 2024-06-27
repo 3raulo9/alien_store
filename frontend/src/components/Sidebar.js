@@ -1,14 +1,18 @@
-import React from "react";
+import {React,useState} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { selectLogged, doLogout } from "../reducers/loginSlice"; // Adjust this import based on where your login slice is located
+import { selectCartItems } from "../reducers/cartSlice"; // Adjust based on where your cart slice is located
 import "../assets/css/Sidebar.css";
 import TranslatorButton from "../components/TranslatorButton";
 
 const Sidebar = () => {
   const isLogged = useSelector(selectLogged); // Use the selector to get the login state
+  const cartItems = useSelector(selectCartItems); // Use the selector to get the cart items
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [refresh, setRefresh] = useState(false);
+
 
   const handleProfileClick = () => {
     navigate("/profile"); // Navigate to the profile page
@@ -19,10 +23,15 @@ const Sidebar = () => {
     height: "60px",
     // additional properties specific to lord-icon can go here
   };
+
   const handleLogout = () => {
     dispatch(doLogout()); // Dispatch the logout action
-    navigate("/"); // Redirect to the home page after logging out
+    navigate("/");
+    setRefresh(!refresh) // Redirect to the home page after logging out
   };
+
+  // Calculate the total number of items in the cart
+  const totalCartItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <div className="sidebar">
@@ -49,14 +58,17 @@ const Sidebar = () => {
       </Link>
       <ul className="nav-links">
         <li>
-          <Link to="/cart">
-            <li className="hover-effect">
+          <Link to="/cart/">
+            <li className="hover-effect" style={{ position: 'relative' }}>
               <lord-icon
                 style={lordIconStyle}
                 src="https://cdn.lordicon.com/odavpkmb.json"
                 trigger="hover"
                 colors="primary:#ffffff,secondary:#21d07a"
               ></lord-icon>
+              {totalCartItems > 0 && (
+                <span className="cart-badge">{totalCartItems}</span>
+              )}
               <div style={{ margin: `${5}px` }}></div>
               <i>CART</i>
             </li>
@@ -105,7 +117,6 @@ const Sidebar = () => {
                   src="https://cdn.lordicon.com/kzrjvkoe.json"
                   colors="primary:#ffffff,secondary:#21d07a"
                   trigger="hover"
-
                 ></lord-icon>
                 <div style={{ margin: `${5}px` }}></div>
                 <i>Profile</i>
