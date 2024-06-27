@@ -49,7 +49,7 @@ const TranslatorButton = () => {
   const translateTextNode = (node) => {
     const originalText = node.textContent.trim();
     axios
-      .post("/api/translate/", {
+      .post("/translate/", {
         input_text: originalText,
         language: selectedLanguage,
       })

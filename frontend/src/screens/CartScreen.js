@@ -42,10 +42,10 @@ const CartScreen = () => {
       <h1>Shopping Cart</h1>
       {loading ? (
         <p>Loading...</p>
-      ) : !token ? (
-        <div>
-          <p>You need an account to access this site. Please <Link style={{ color: "white" }} to="/login">log in</Link> or <Link style={{ color: "white" }} to="/register">register</Link> if you don't already have an account.</p>
-        </div>
+      // ) : !token ? (
+      //   <div>
+      //     <p>You need an account to access this site. Please <Link style={{ color: "white" }} to="/login">log in</Link> or <Link style={{ color: "white" }} to="/register">register</Link> if you don't already have an account.</p>
+      //   </div>
       ) : error ? (
         <div>
           <p>Error: {error}</p>
