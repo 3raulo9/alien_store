@@ -76,7 +76,7 @@ def getProduct(req, pk):
     serializer = ProductSerializer(product, many=False)
     return Response(serializer.data)
 
-selected_language = 'fr'  # Default language
+# selected_language = 'fr'  # Default language
 
 @api_view(['POST'])
 def translate(request):
@@ -84,7 +84,7 @@ def translate(request):
     if request.method == "POST":
         data = request.data
         your_sentence = data.get("input_text")
-        selected_language = data.get('language', 'fr')
+        selected_language = data.get('language')
         translator = Translator()
         translation = translator.translate(your_sentence, dest=selected_language)
         translated_text = translation.text

@@ -1,11 +1,19 @@
-import axios from 'axios';
+// translationAPI.js
 
-const API_URL = 'http://127.0.0.1:8000'; // Adjust this to your API URL
+import axios from "axios";
 
-export const translateText = async (input_text, language) => {
-  const response = await axios.post(`${API_URL}/translate`, {
-    input_text,
-    language,
-  });
-  return response.data;
+const translationAPI = {
+  translate: async (text, language) => {
+    try {
+      const response = await axios.post("/translate/", {
+        input_text: text,
+        language: language,
+      });
+      return response.data.translated_text; // Ensure that only the translated text is returned
+    } catch (error) {
+      throw Error("Error translating text:", error);
+    }
+  },
 };
+
+export default translationAPI;
