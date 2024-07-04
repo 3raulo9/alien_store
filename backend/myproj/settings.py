@@ -105,6 +105,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "myproj.wsgi.application"
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 
 # Database

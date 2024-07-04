@@ -17,7 +17,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
-
+import threading
 from .models import CartItem, Product
 from .serializers import CartItemSerializer, CartItemCreateSerializer
 
@@ -76,7 +76,12 @@ def getProduct(req, pk):
     serializer = ProductSerializer(product, many=False)
     return Response(serializer.data)
 
-# selected_language = 'fr'  # Default language
+selected_language = None
+
+def perform_translation(sentences, selected_language, results, index):
+    translator = Translator()
+    translations = [translator.translate(sentence, dest=selected_language).text for sentence in sentences]
+    results[index] = " ".join(translations)
 
 @api_view(['POST'])
 def translate(request):
@@ -85,12 +90,52 @@ def translate(request):
         data = request.data
         your_sentence = data.get("input_text")
         selected_language = data.get('language')
-        translator = Translator()
-        translation = translator.translate(your_sentence, dest=selected_language)
-        translated_text = translation.text
+        
+        if not your_sentence or not selected_language:
+            return Response({'error': "No text or language provided"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        sentences = your_sentence.split('. ')
+        num_threads = 5
+        chunk_size = max(1, len(sentences) // num_threads)
+        
+        chunks = [sentences[i * chunk_size:(i + 1) * chunk_size] for i in range(num_threads)]
+        
+        results = {}
+        
+        threads = []
+        for i, chunk in enumerate(chunks):
+            thread = threading.Thread(target=perform_translation, args=(chunk, selected_language, results, i))
+            threads.append(thread)
+            thread.start()
+        
+        for thread in threads:
+            thread.join()
+        
+        translated_text = " ".join(results[i] for i in range(num_threads) if i in results)
         return Response({'translated_text': translated_text, 'selected_language': selected_language})
-    return Response({'error': "No text received"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    return Response({'error': "Invalid request method"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+@api_view(['POST'])
+def translate_batch(request):
+    global selected_language
+    if request.method == "POST":
+        data = request.data
+        input_texts = data.get("input_texts")
+        selected_language = data.get('language')
+
+        if not input_texts or not selected_language:
+            return Response({'error': "No texts or language provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        translator = Translator()
+        translated_texts = []
+        for text in input_texts:
+            translation = translator.translate(text, dest=selected_language)
+            translated_texts.append(translation.text)
+
+        return Response({'translated_texts': translated_texts, 'selected_language': selected_language})
+    
+    return Response({'error': "Invalid request method"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class Cart(APIView):
