@@ -9,6 +9,7 @@ import ProductScreen from "./screens/ProductScreen";
 
 import Login from "./screens/Login";
 import { Routes, Route } from "react-router-dom"; // Import Routes and Route directly, not Router
+import CartScreen from "./screens/CartScreen";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
               <Route path="/login" element={<Login />}  />
               <Route path="/register" element={<RegisterScreen />} />
               <Route path="/product/:id" element={<ProductScreen />} />
+              <Route path="/cart/" element={<CartScreen/>} />
               {/* Additional routes as needed */}
             </Routes>
           </Container>

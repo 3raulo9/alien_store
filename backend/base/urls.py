@@ -1,17 +1,18 @@
 from django.urls import path
-from . import views
-from rest_framework_simplejwt.views import TokenObtainPairView
-from .views import MyTokenObtainPairView  # Make sure this import is added
-from .views import logout_view
+from .views import *
 
 urlpatterns = [
-    path("", views.index),
-    path("products/", views.getProducts, name="products"),
-    path("product/<str:pk>/", views.getProduct, name="product"),
-    path("about/", views.about),
-    path("login/", MyTokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("logout/", logout_view, name="logout"),
-    path("register/", views.register),
-    
-    path("translate/", views.translate, name="translate"),
+    path('cart/', Cart.as_view(), name='cart'),  # Endpoint for getting and adding items to cart
+    path('cart/<int:pk>', Cart.as_view(), name='cart_item'),  # Endpoint for updating and deleting items in cart
+    path('cart/checkout/', checkout, name='checkout'),  # Endpoint for checkout process
+
+    # Your other endpoints http://localhost:3000/translate_batch/
+    path('products/', getProducts, name='get_products'),
+    path('products/<int:pk>/', getProduct, name='get_product'),
+    path('translate/', translate, name='translate'),
+    path('translate_batch/', translate_batch, name='translate_batch'),
+    path('register/', register, name='register'),
+    path('logout/', logout_view, name='logout'),
+    path('login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('about/', about, name='about'),
 ]

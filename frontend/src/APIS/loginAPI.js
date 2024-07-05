@@ -3,9 +3,9 @@
 import axios from 'axios';
 
 // Endpoint for login
-const LOGIN_API = "/api/login/";
+const LOGIN_API = "http://localhost:3000/login/";
 // Endpoint for logout - adjust this if your endpoint is different
-const LOGOUT_API = "/api/logout/";
+const LOGOUT_API = "http://localhost:3000/logout/";
 
 export function fetchLogin(credentials) {
     return axios.post(LOGIN_API, credentials, {
@@ -20,10 +20,6 @@ export function fetchLogout(refreshToken) {
     // Assume you store the access token in localStorage or another secure place
     const accessToken = localStorage.getItem('accessToken');
     return axios.post(LOGOUT_API, { refresh_token: refreshToken }, {
-        headers: {
-            // Include the Authorization header with the access token
-            Authorization: `Bearer ${accessToken}`
-        }
     });
 }
 

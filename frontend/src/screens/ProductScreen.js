@@ -1,25 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from "react-router-dom"; // Import useParams
-import { Row, Col, Image, ListGroup, Card } from "react-bootstrap";
-import Rating from "../components/Rating";
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { Row, Col, Image, ListGroup, Card, Button, Alert } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCartAsync } from '../reducers/cartSlice';
+import { fetchProductAsync, selectProduct, selectProductLoading, selectProductError } from '../reducers/productSlice';
+import Rating from '../components/Rating';
 
 const ProductScreen = () => {
-  const { id } = useParams(); // Accessing route parameters
-  const [product, setProducts] = useState([]);
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  const product = useSelector(selectProduct);
+  const loading = useSelector(selectProductLoading);
+  const error = useSelector(selectProductError);
+  const [quantity, setQuantity] = useState(1);
+  const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
-    async function fetchProducts() {
-      try {
-        const { data } = await axios.get(`/api/product/${id}`);
-        setProducts(data);
-      } catch (error) {
-        console.error('Error fetching product:', error);
-      }
-    }
-    fetchProducts();
-  }, [id]); // Fetch products whenever id changes
+    dispatch(fetchProductAsync(id));
+  }, [dispatch, id]);
 
+  const addToCartAsyncHandler = () => {
+    dispatch(addToCartAsync({ id: id, quantity }));
+    setShowAlert(true); // Show alert after adding to cart
+    setTimeout(() => {
+      setShowAlert(false); // Hide alert after 3 seconds
+    }, 3000);
+  };
 
   return (
     <div>
@@ -66,12 +72,8 @@ const ProductScreen = () => {
           </ListGroup>
         </Col>
 
-        <Col
-          className="my-2 p-3 rounded"
-          md={3}
-        
-        >
-          <Card   style={{ borderTopLeftRadius: "80px", borderTopRightRadius: "30px" }}> 
+        <Col className="my-2 p-3 rounded" md={3}>
+          <Card style={{ borderTopLeftRadius: "80px", borderTopRightRadius: "30px" }}>
             <ListGroup variant="flush">
               <ListGroup.Item
                 style={{
@@ -97,25 +99,53 @@ const ProductScreen = () => {
                 </Col>
               </ListGroup.Item>
 
+              {product.countInStock > 0 && (
+                <ListGroup.Item
+                  style={{ backgroundColor: "white", color: "gray" }}
+                >
+                  <Row>
+                    <Col>Qty</Col>
+                    <Col>
+                      <select
+                        value={quantity}
+                        onChange={(e) => setQuantity(Number(e.target.value))}
+                      >
+                        {[...Array(product.countInStock).keys()].map((x) => (
+                          <option key={x + 1} value={x + 1}>
+                            {x + 1}
+                          </option>
+                        ))}
+                      </select>
+                    </Col>
+                  </Row>
+                </ListGroup.Item>
+              )}
+
               <ListGroup.Item
                 style={{ backgroundColor: "white", color: "gray" }}
               >
-                <button
+                <Button
                   className="buttonSpecial"
                   disabled={product.countInStock === 0}
                   type="button"
+                  onClick={addToCartAsyncHandler}
                 >
                   Add to cart
-                </button>
+                </Button>
               </ListGroup.Item>
             </ListGroup>
           </Card>
         </Col>
       </Row>
-      <hr class="hr hr-blurry" />{" "}
+      <hr className="hr hr-blurry" />{" "}
       <Link to="/">
-        <button class="buttonSpecial">HOME</button>
+        <Button className="buttonSpecial">HOME</Button>
       </Link>
+
+      {/* Alert for item added to cart */}
+      <Alert show={showAlert} variant="success" className="mt-3">
+        Item added to cart successfully!
+      </Alert>
     </div>
   );
 };

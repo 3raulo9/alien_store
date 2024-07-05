@@ -1,25 +1,27 @@
+// src/screens/HomeScreen.js
 import React, { useEffect, useState } from "react";
 import { Row, Col } from "react-bootstrap";
-import Product from '../components/Product'
-import axios from 'axios'
-
+import Product from '../components/Product';
+import { fetchProducts } from '../APIS/productAPI';
 
 const HomeScreen = () => {
-  const [products, setProducts] = useState([])
+  const [products, setProducts] = useState([]);
   
-  useEffect(() =>{
-    async function fetchProducts(){
-      const {data} =  await axios.get('/api/products/')
-      setProducts(data)
-
+  useEffect(() => {
+    async function getProducts() {
+      try {
+        const products = await fetchProducts();
+        setProducts(products);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
     }
-    fetchProducts()
-  }, [])
+    getProducts();
+  }, []);
 
   return (
     <div>
-    
-      <div style={{ fontSize: " 50px" }} >PRODUCTS</div>
+      <div style={{ fontSize: "50px" }}>PRODUCTS</div>
       <br />
       <Row>
         {products.map((product) => (

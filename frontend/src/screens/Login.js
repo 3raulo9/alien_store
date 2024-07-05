@@ -1,6 +1,7 @@
 // screens/Login.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom"; // Use useNavigate instead of useHistory
 import {
   doLoginAsync,
   doLogout,
@@ -22,16 +23,26 @@ const Login = () => {
   const loading = useSelector(selectLoading);
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Use useNavigate instead of useHistory
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [refresh, setRefresh] = useState(false);
 
   const handleLogin = () => {
     dispatch(doLoginAsync({ username, password }));
+    setRefresh(!refresh)
   };
 
   const handleLogout = () => {
     dispatch(doLogout());
+    setRefresh(!refresh)
   };
+
+  useEffect(() => {
+    if (logged) {
+      navigate("/"); // Navigate to HomeScreen when logged in
+    }
+  }, [logged, navigate,refresh]);
 
   if (loading) {
     return <Loader />;
@@ -41,26 +52,20 @@ const Login = () => {
     <div>
       {logged ? (
         <div>
-          <Col style={{ fontSize: " 70px" }}>Hey user {user?.name}</Col>
-
+          <Col style={{ fontSize: "70px" }}>Hey user {user?.name}</Col>
           <div style={{ margin: `${87}px` }}></div>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <p className="LoginIconLayers"></p>
           </div>
           <div style={{ margin: `${43}px` }}></div>
           <hr className="hr hr-blurry" />{" "}
-          
-          <button
-            className="buttonSpecial"
-            onClick={handleLogout}
-          >
+          <button className="buttonSpecial" onClick={handleLogout}>
             LOG OUT
           </button>
-          
         </div>
       ) : (
         <div>
-          <Col style={{ fontSize: " 70px" }}>Login</Col>
+          <Col style={{ fontSize: "70px" }}>Login</Col>
           <div style={{ margin: `${87}px` }}></div>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <p className="LoginIconLayers"></p>
@@ -89,12 +94,16 @@ const Login = () => {
           </div>{" "}
           <div style={{ margin: `${100}px` }}></div>
           <hr className="hr hr-blurry" />
-          <button
-            className="buttonSpecial"
-            onClick={handleLogin}
-          >
+          <button className="buttonSpecial" onClick={handleLogin}>
             Log In
           </button>
+          <p className="signin">
+          <br />
+          doesn't have an account?{" "}
+          <Link style={{ color: "white" }} to="/register">
+            Register
+          </Link>
+        </p>
         </div>
       )}
     </div>
