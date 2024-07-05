@@ -34,21 +34,16 @@ const CartScreen = () => {
   const subtotalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   const subtotalPrice = cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0).toFixed(2);
 
-  // Check if the token exists
-  const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
+  const token = localStorage.getItem('token');
 
   return (
     <div>
       <h1>Shopping Cart</h1>
       {loading ? (
         <p>Loading...</p>
-      // ) : !token ? (
-      //   <div>
-      //     <p>You need an account to access this site. Please <Link style={{ color: "white" }} to="/login">log in</Link> or <Link style={{ color: "white" }} to="/register">register</Link> if you don't already have an account.</p>
-      //   </div>
       ) : error ? (
         <div>
-          <p>Error: {error}</p>
+          <p>Error: {error.message || JSON.stringify(error)}</p>
           {console.error(`Error: ${error}`)}
         </div>
       ) : (
