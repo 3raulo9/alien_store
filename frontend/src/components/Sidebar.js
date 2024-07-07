@@ -54,6 +54,7 @@ const Sidebar = () => {
       >
         <span className="arshop-button" style={{ fontSize: "24px" }}>
           <i>Nebuja</i>
+          
         </span>
       </Link>
       <ul className="nav-links">

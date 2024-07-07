@@ -1,8 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card } from "react-bootstrap";
 import Rating from "./Rating";
 import { Link } from "react-router-dom";
+import translationAPI from "../APIS/translationAPI"; // Import your translation API utility
+import { useSelector } from "react-redux";
+
 const Product = ({ product }) => {
+  const [translatedName, setTranslatedName] = useState(product.name);
+  const [translatedPrice, setTranslatedPrice] = useState(`$ ${product.price}`);
+  const [translatedReviews, setTranslatedReviews] = useState(`${product.numReviews} reviews`);
+  const [loading, setLoading] = useState(false);
+  const selectedLanguage = useSelector((state) => state.translation.selectedLanguage);
+
+  useEffect(() => {
+    const translateProduct = async () => {
+      if (selectedLanguage && selectedLanguage !== 'en') {
+        setLoading(true);
+        try {
+          // Translate product details
+          const textsToTranslate = [
+            product.name,
+            `$${product.price}`,
+            `${product.numReviews} reviews`,
+          ];
+
+          const translatedTexts = await translationAPI.translateBatch(textsToTranslate, selectedLanguage);
+          const [name, price, reviews] = translatedTexts;
+
+          setTranslatedName(name);
+          setTranslatedPrice(price);
+          setTranslatedReviews(reviews);
+        } catch (error) {
+          console.error("Error translating product details:", error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setTranslatedName(product.name);
+        setTranslatedPrice(`$ ${product.price}`);
+        setTranslatedReviews(`${product.numReviews} reviews`);
+      }
+    };
+
+    translateProduct();
+  }, [selectedLanguage, product]);
+
   return (
     <Card
       className="my-4 p-2"
@@ -27,27 +69,35 @@ const Product = ({ product }) => {
           }}
         />
       </Link>
-      <hr class="hr hr-blurry" />
+      <hr className="hr hr-blurry" />
       <Card.Body>
         <Link
           to={`/product/${product._id}`}
           style={{ textDecoration: "none", color: "#b3b3b3" }}
         >
           <Card.Title as="div">
-            <strong>{product.name}</strong>
+            <strong>{loading ? 'Translating...' : translatedName}</strong>
           </Card.Title>
         </Link>
         <Card.Text as="h3">
           <Rating
             value={product.rating}
             color={"#21d07a"}
-          /><br />
+          />
+          <br />
           <Card.Title as="div">
-            <strong>{product.numReviews} reviews</strong> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 30 30" height="30" width="30" id="Ethereum--Streamline-Core"><desc>Ethereum Streamline Icon: https://streamlinehq.com</desc><g id="ethereum--crypto-circle-payment-blokchain-finance-ethereum-eth-currency"><path id="Subtract" stroke="#2eff99" stroke-linecap="round" stroke-linejoin="round" d="m15.365635714285714 1.2268071428571428 10.15172142857143 13.783864285714285 -10.15172142857143 13.78375714285714 -10.152621428571429 -13.783735714285713L15.365635714285714 1.2268071428571428Z" stroke-width="1"></path><path id="Subtract_2" stroke="#2eff99" stroke-linecap="round" stroke-linejoin="round" d="M25.51692857142857 15.010992857142858 15.365378571428572 18.382457142857145 5.212757142857143 15.011014285714285" stroke-width="1"></path></g></svg>
+            <strong>{loading ? 'Translating...' : translatedReviews}</strong>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 30 30" height="30" width="30" id="Ethereum--Streamline-Core">
+              <desc>Ethereum Streamline Icon: https://streamlinehq.com</desc>
+              <g id="ethereum--crypto-circle-payment-blokchain-finance-ethereum-eth-currency">
+                <path id="Subtract" stroke="#2eff99" strokeLinecap="round" strokeLinejoin="round" d="m15.3656 1.2268 10.1517 13.7839-10.1517 13.7838-10.1526-13.7837L15.3656 1.2268Z" strokeWidth="1"></path>
+                <path id="Subtract_2" stroke="#2eff99" strokeLinecap="round" strokeLinejoin="round" d="M25.5169 15.011 15.3654 18.3825 5.2128 15.011" strokeWidth="1"></path>
+              </g>
+            </svg>
           </Card.Title>
         </Card.Text>
-        <hr class="hr hr-blurry" />
-        <Card.Text as="h3">$ {product.price}</Card.Text>
+        <hr className="hr hr-blurry" />
+        <Card.Text as="h3">{loading ? 'Translating...' : translatedPrice}</Card.Text>
       </Card.Body>
     </Card>
   );

@@ -1,19 +1,30 @@
 // translationAPI.js
 
-import axios from "axios";
+const translateBatch = async (texts, language) => {
+  if (!texts || !language) {
+    throw new Error("Missing texts or language");
+  }
 
-const translationAPI = {
-  translate: async (text, language) => {
-    try {
-      const response = await axios.post("/translate/", {
-        input_text: text,
-        language: language,
-      });
-      return response.data.translated_text; // Ensure that only the translated text is returned
-    } catch (error) {
-      throw Error("Error translating text:", error);
-    }
-  },
+  const response = await fetch('/translate_batch/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ input_texts: texts, language }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+
+  const data = await response.json();
+  if (data.error) {
+    throw new Error(data.error);
+  }
+
+  return data.translated_texts;
 };
 
-export default translationAPI;
+export default {
+  translateBatch,
+};

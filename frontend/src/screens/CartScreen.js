@@ -1,26 +1,60 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCartItemsAsync, removeFromCartAsync, checkoutAsync, selectCartItems, selectCartLoading, selectCartError } from '../reducers/cartSlice';
 import { Row, Col, ListGroup, Image, Button, Card, Modal } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 import Pay from '../components/Pay';
+import translationAPI from '../APIS/translationAPI';
 
 const CartScreen = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector(selectCartItems);
   const loading = useSelector(selectCartLoading);
   const error = useSelector(selectCartError);
-  const [refresh, setRefresh] = useState(false);
+  const { selectedLanguage } = useSelector((state) => state.translation);
   const [showModal, setShowModal] = useState(false);
+  const [translations, setTranslations] = useState({
+    cartTitle: 'Shopping Cart',
+    emptyCartMessage: 'Your cart is empty',
+    subtotalText: `Subtotal (${cartItems.reduce((acc, item) => acc + item.quantity, 0)}) items`,
+    totalPriceText: `Total price: $${cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0).toFixed(2)}`,
+    proceedToCheckoutText: 'Proceed To Checkout'
+  });
 
   useEffect(() => {
     dispatch(fetchCartItemsAsync());
-  }, [dispatch, refresh]);
+  }, [dispatch]);
 
-  const removeFromCartHandler = (_id) => {
+  useEffect(() => {
+    const translateContent = async () => {
+      if (selectedLanguage) {
+        const textsToTranslate = [
+          'Shopping Cart',
+          'Your cart is empty',
+          `Subtotal (${cartItems.reduce((acc, item) => acc + item.quantity, 0)}) items`,
+          `Total price: $${cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0).toFixed(2)}`,
+          'Proceed To Checkout'
+        ];
+  
+        try {
+          const translatedTexts = await translationAPI.translateBatch(textsToTranslate, selectedLanguage);
+          document.querySelector('h1').textContent = translatedTexts[0];
+          document.querySelector('.empty-cart-message').textContent = translatedTexts[1];
+          document.querySelector('.cart-subtotal').textContent = translatedTexts[2];
+          document.querySelector('.total-price').textContent = translatedTexts[3];
+          document.querySelector('.checkout-button').textContent = translatedTexts[4];
+        } catch (error) {
+          console.error("Error translating text:", error.message);
+        }
+      }
+    };
+  
+    translateContent();
+  }, [cartItems, selectedLanguage]);
+  
+
+  const removeFromCartHandler = useCallback((_id) => {
     dispatch(removeFromCartAsync(_id));
-    setRefresh(!refresh);
-  };
+  }, [dispatch]);
 
   const handleCheckout = () => {
     dispatch(checkoutAsync());
@@ -34,18 +68,11 @@ const CartScreen = () => {
   const subtotalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   const subtotalPrice = cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0).toFixed(2);
 
-  // Check if the token exists
-  const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
-
   return (
     <div>
-      <h1>Shopping Cart</h1>
+      <h1>{translations.cartTitle}</h1>
       {loading ? (
         <p>Loading...</p>
-      // ) : !token ? (
-      //   <div>
-      //     <p>You need an account to access this site. Please <Link style={{ color: "white" }} to="/login">log in</Link> or <Link style={{ color: "white" }} to="/register">register</Link> if you don't already have an account.</p>
-      //   </div>
       ) : error ? (
         <div>
           <p>Error: {error}</p>
@@ -56,7 +83,7 @@ const CartScreen = () => {
           <Col md={8}>
             <ListGroup variant="flush">
               {cartItems.length === 0 ? (
-                <p>Your cart is empty</p>
+                <p className="empty-cart-message">{translations.emptyCartMessage}</p>
               ) : (
                 cartItems.map((item) => (
                   <ListGroup.Item key={item._id}>
@@ -85,15 +112,13 @@ const CartScreen = () => {
           <Col md={4}>
             <Card>
               <ListGroup variant="flush">
-                <ListGroup.Item>
-                  <h2>
-                    Subtotal ({subtotalItems}) items
-                  </h2>
+                <ListGroup.Item className="cart-subtotal">
+                  <h2>{translations.subtotalText}</h2>
                   ${subtotalPrice}
                 </ListGroup.Item>
                 <ListGroup.Item>
-                  <Button type="button" className="btn-block" disabled={cartItems.length === 0} onClick={handleProceedToCheckout}>
-                    Proceed To Checkout
+                  <Button type="button" className="checkout-button btn-block" disabled={cartItems.length === 0} onClick={handleProceedToCheckout}>
+                    {translations.proceedToCheckoutText}
                   </Button>
                 </ListGroup.Item>
               </ListGroup>
@@ -108,8 +133,8 @@ const CartScreen = () => {
         </Modal.Header>
         <Modal.Body>
           <p>Number of items: {subtotalItems}</p>
-          <p>Total price: ${subtotalPrice}</p>
-          <Pay></Pay>
+          <p className="total-price">{translations.totalPriceText}</p>
+          <Pay />
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowModal(false)}>

@@ -1,5 +1,4 @@
-// TranslatorButton.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleFontFamily, setSelectedLanguage } from "../reducers/translatorSlice";
 import { selectProductLoading } from "../reducers/productSlice";
@@ -22,33 +21,41 @@ const TranslatorButton = () => {
     }
   }, [dispatch, productLoading]);
 
-  const toggleFont = () => {
-    dispatch(toggleFontFamily());
-  };
+  const translateDOM = useCallback(async (node, language) => {
+    const textNodes = [];
+    const gatherTextNodes = (node) => {
+      if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+        textNodes.push(node);
+      } else {
+        for (const childNode of node.childNodes) {
+          gatherTextNodes(childNode);
+        }
+      }
+    };
+
+    gatherTextNodes(node);
+
+    const textsToTranslate = textNodes.map((node) => node.textContent.trim());
+    if (textsToTranslate.length === 0) return;
+
+    try {
+      const translatedTexts = await translationAPI.translateBatch(textsToTranslate, language);
+      textNodes.forEach((node, index) => {
+        node.textContent = translatedTexts[index] || node.textContent;
+      });
+      localStorage.setItem("translatedTextNodes", JSON.stringify(textNodes.map(node => node.textContent)));
+    } catch (error) {
+      console.error("Error translating text:", error);
+    }
+  }, []);
 
   const handleTranslation = () => {
     localStorage.setItem("selectedLanguage", selectedLanguage);
     translateDOM(document.body, selectedLanguage);
   };
 
-  const translateDOM = async (node, language) => {
-    if (node.nodeType === Node.TEXT_NODE) {
-      await translateTextNode(node, language);
-    } else {
-      for (const childNode of node.childNodes) {
-        await translateDOM(childNode, language);
-      }
-    }
-  };
-
-  const translateTextNode = async (node, language) => {
-    const originalText = node.textContent.trim();
-    try {
-      const translatedText = await translationAPI.translate(originalText, language);
-      node.textContent = translatedText;
-    } catch (error) {
-      console.error("Error translating text:", error);
-    }
+  const toggleFont = () => {
+    dispatch(toggleFontFamily());
   };
 
   const handleLanguageChange = (e) => {
@@ -56,12 +63,20 @@ const TranslatorButton = () => {
     dispatch(setSelectedLanguage(e.target.value));
   };
 
+  useEffect(() => {
+    const storedTextNodes = JSON.parse(localStorage.getItem("translatedTextNodes"));
+    if (storedTextNodes) {
+      translateDOM(document.body, selectedLanguage);
+    }
+  }, [selectedLanguage, translateDOM]);
+
   const imgStyle = {
     filter: "hue-rotate(20deg) saturate(90%)",
     width: "90px",
     height: "80px",
     objectFit: "contain",
   };
+
   return (
     <li className="arshop-button">
       <p className="glow-on-hover">
