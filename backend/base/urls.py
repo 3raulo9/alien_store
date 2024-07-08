@@ -15,4 +15,5 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('about/', about, name='about'),
+    path('profile/', ProfileView.as_view()),
 ]
