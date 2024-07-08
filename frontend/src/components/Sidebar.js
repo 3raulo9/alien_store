@@ -1,10 +1,11 @@
-import {React,useState} from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { selectLogged, doLogout } from "../reducers/loginSlice"; // Adjust this import based on where your login slice is located
 import { selectCartItems } from "../reducers/cartSlice"; // Adjust based on where your cart slice is located
 import "../assets/css/Sidebar.css";
 import TranslatorButton from "../components/TranslatorButton";
+import translationAPI from "../APIS/translationAPI"; // Make sure to adjust the path based on your project structure
 
 const Sidebar = () => {
   const isLogged = useSelector(selectLogged); // Use the selector to get the login state
@@ -12,7 +13,41 @@ const Sidebar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState(localStorage.getItem("selectedLanguage") || "");
 
+  useEffect(() => {
+    if (selectedLanguage) {
+      translateDOM(document.body, selectedLanguage);
+    }
+  }, [selectedLanguage]);
+
+  const translateDOM = async (node, language) => {
+    const textNodes = [];
+    const gatherTextNodes = (node) => {
+      if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+        textNodes.push(node);
+      } else {
+        for (const childNode of node.childNodes) {
+          gatherTextNodes(childNode);
+        }
+      }
+    };
+
+    gatherTextNodes(node);
+
+    const textsToTranslate = textNodes.map((node) => node.textContent.trim());
+    if (textsToTranslate.length === 0) return;
+
+    try {
+      const translatedTexts = await translationAPI.translateBatch(textsToTranslate, language);
+      textNodes.forEach((node, index) => {
+        node.textContent = translatedTexts[index] || node.textContent;
+      });
+      localStorage.setItem("translatedTextNodes", JSON.stringify(textNodes.map(node => node.textContent)));
+    } catch (error) {
+      console.error("Error translating text:", error);
+    }
+  };
 
   const handleProfileClick = () => {
     navigate("/profile"); // Navigate to the profile page
@@ -27,7 +62,7 @@ const Sidebar = () => {
   const handleLogout = () => {
     dispatch(doLogout()); // Dispatch the logout action
     navigate("/");
-    setRefresh(!refresh) // Redirect to the home page after logging out
+    setRefresh(!refresh); // Redirect to the home page after logging out
   };
 
   // Calculate the total number of items in the cart
