@@ -29,7 +29,8 @@ export const addToCartAsync = createAsyncThunk(
       const state = getState();
       const token = selectToken(state);
       const response = await addToCart(id, quantity, token);
-      return response.data;
+      const product = response.data; // Assuming response.data contains the product information
+      return { product, quantity };
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -49,6 +50,7 @@ export const removeFromCartAsync = createAsyncThunk(
     }
   }
 );
+
 export const checkoutAsync = createAsyncThunk(
   'cart/checkout',
   async (_, { getState }) => {

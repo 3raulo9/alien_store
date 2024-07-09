@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToCartAsync } from '../reducers/cartSlice';
 import { fetchProductAsync, selectProduct, selectProductLoading, selectProductError } from '../reducers/productSlice';
 import Rating from '../components/Rating';
+import translationAPI from '../APIS/translationAPI';
 
 const ProductScreen = () => {
   const { id } = useParams();
@@ -14,16 +15,60 @@ const ProductScreen = () => {
   const error = useSelector(selectProductError);
   const [quantity, setQuantity] = useState(1);
   const [showAlert, setShowAlert] = useState(false);
+  const [translatedProduct, setTranslatedProduct] = useState(null);
+  const { selectedLanguage } = useSelector((state) => state.translation);
 
   useEffect(() => {
-    dispatch(fetchProductAsync(id));
+    const fetchProduct = async () => {
+      try {
+        const storedProduct = localStorage.getItem(`product_${id}`);
+        if (!storedProduct) {
+          dispatch(fetchProductAsync(id));
+        }
+      } catch (error) {
+        console.error('Error fetching product:', error);
+      }
+    };
+
+    fetchProduct();
   }, [dispatch, id]);
+
+  useEffect(() => {
+    const translateProduct = async () => {
+      if (selectedLanguage && product) {
+        const textsToTranslate = [
+          product.name,
+          product.description,
+          `Price: $${product.price}`,
+          `${product.numReviews} reviews`,
+          `Qty`
+        ];
+
+        try {
+          const translatedTexts = await translationAPI.translateBatch(textsToTranslate, selectedLanguage);
+          const [translatedName, translatedDescription, translatedPrice, translatedReviews, translatedQty] = translatedTexts;
+
+          setTranslatedProduct({
+            name: translatedName || product.name,
+            description: translatedDescription || product.description,
+            price: translatedPrice || `Price: $${product.price}`,
+            reviews: translatedReviews || `${product.numReviews} reviews`,
+            qty: translatedQty || `Qty`,
+          });
+        } catch (error) {
+          console.error("Error translating text:", error);
+        }
+      }
+    };
+
+    translateProduct();
+  }, [selectedLanguage, product]);
 
   const addToCartAsyncHandler = () => {
     dispatch(addToCartAsync({ id: id, quantity }));
-    setShowAlert(true); // Show alert after adding to cart
+    setShowAlert(true);
     setTimeout(() => {
-      setShowAlert(false); // Hide alert after 3 seconds
+      setShowAlert(false);
     }, 3000);
   };
 
@@ -47,6 +92,7 @@ const ProductScreen = () => {
         <Col className="my-3 p-3 rounded" md={3}>
           <ListGroup variant="flush">
             <ListGroup.Item
+              className="product-name"
               style={{
                 backgroundColor: "#0c0c0c",
                 color: "#b3b3b3",
@@ -55,20 +101,20 @@ const ProductScreen = () => {
                 borderTopRightRadius: "30px",
               }}
             >
-              <h3>{product.name}</h3>
+              <h3>{translatedProduct ? translatedProduct.name : product.name}</h3>
             </ListGroup.Item>
 
-            <ListGroup.Item>
+            <ListGroup.Item className="product-reviews">
               <Rating
                 value={product.rating}
-                text={`${product.numReviews} reviews`}
+                text={translatedProduct ? translatedProduct.reviews : `${product.numReviews} reviews`}
                 color={"#21d07a"}
               />
             </ListGroup.Item>
 
-            <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
+            <ListGroup.Item className="product-price">Price: {translatedProduct ? translatedProduct.price : `Price: $${product.price}`}</ListGroup.Item>
 
-            <ListGroup.Item>Description: {product.description}</ListGroup.Item>
+            <ListGroup.Item className="product-description">Description: {translatedProduct ? translatedProduct.description : product.description}</ListGroup.Item>
           </ListGroup>
         </Col>
 
@@ -86,7 +132,7 @@ const ProductScreen = () => {
               >
                 <Col>Price:</Col>
                 <Col>
-                  <strong>${product.price}</strong>
+                  <strong>{translatedProduct ? translatedProduct.price : `Price: $${product.price}`}</strong>
                 </Col>
               </ListGroup.Item>
 
@@ -104,7 +150,7 @@ const ProductScreen = () => {
                   style={{ backgroundColor: "white", color: "gray" }}
                 >
                   <Row>
-                    <Col>Qty</Col>
+                    <Col className="qty-label">Qty</Col>
                     <Col>
                       <select
                         value={quantity}
@@ -142,7 +188,6 @@ const ProductScreen = () => {
         <Button className="buttonSpecial">HOME</Button>
       </Link>
 
-      {/* Alert for item added to cart */}
       <Alert show={showAlert} variant="success" className="mt-3">
         Item added to cart successfully!
       </Alert>

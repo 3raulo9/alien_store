@@ -10,7 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from googletrans import Translator
 from .models import Product, CartItem, User
-from .serializers import ProductSerializer, CartItemSerializer, CartItemCreateSerializer
+from .serializers import *
 from rest_framework.views import APIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -19,12 +19,36 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 import threading
 from .models import CartItem, Product
-from .serializers import CartItemSerializer, CartItemCreateSerializer
+
 
 @api_view(['POST'])
 def logout_view(request):
     logout(request)
     return Response('User logout')
+
+class ProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        profile = Profile.objects.get(user=request.user)
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data)
+
+    def put(self, request):
+        profile = Profile.objects.get(user=request.user)
+        serializer = ProfileSerializer(profile, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request):
+        serializer = ProfileSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod

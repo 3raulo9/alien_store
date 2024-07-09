@@ -1,12 +1,14 @@
-// src/screens/HomeScreen.js
 import React, { useEffect, useState } from "react";
 import { Row, Col } from "react-bootstrap";
 import Product from '../components/Product';
 import { fetchProducts } from '../APIS/productAPI';
+import translationAPI from '../APIS/translationAPI';
+import { useSelector } from 'react-redux';
 
 const HomeScreen = () => {
   const [products, setProducts] = useState([]);
-  
+  const { selectedLanguage } = useSelector((state) => state.translation);
+
   useEffect(() => {
     async function getProducts() {
       try {
@@ -18,6 +20,8 @@ const HomeScreen = () => {
     }
     getProducts();
   }, []);
+
+
 
   return (
     <div>

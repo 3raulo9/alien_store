@@ -10,16 +10,24 @@ const CartScreen = () => {
   const cartItems = useSelector(selectCartItems);
   const loading = useSelector(selectCartLoading);
   const error = useSelector(selectCartError);
-  const [refresh, setRefresh] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [subtotalItems, setSubtotalItems] = useState(0);
+  const [subtotalPrice, setSubtotalPrice] = useState(0);
 
   useEffect(() => {
     dispatch(fetchCartItemsAsync());
-  }, [dispatch, refresh]);
+  }, [dispatch]);
 
-  const removeFromCartHandler = (_id) => {
-    dispatch(removeFromCartAsync(_id));
-    setRefresh(!refresh);
+  useEffect(() => {
+    const items = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+    const price = cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0).toFixed(2);
+    setSubtotalItems(items);
+    setSubtotalPrice(price);
+  }, [cartItems]);
+
+  const removeFromCartHandler = async (_id) => {
+    await dispatch(removeFromCartAsync(_id));
+    dispatch(fetchCartItemsAsync()); // Refresh the cart items
   };
 
   const handleCheckout = () => {
@@ -30,9 +38,6 @@ const CartScreen = () => {
   const handleProceedToCheckout = () => {
     setShowModal(true);
   };
-
-  const subtotalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
-  const subtotalPrice = cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0).toFixed(2);
 
   const token = localStorage.getItem('token');
 
@@ -51,7 +56,9 @@ const CartScreen = () => {
           <Col md={8}>
             <ListGroup variant="flush">
               {cartItems.length === 0 ? (
-                <p>Your cart is empty</p>
+                <ListGroup.Item>
+                  <p>Your cart is empty</p>
+                </ListGroup.Item>
               ) : (
                 cartItems.map((item) => (
                   <ListGroup.Item key={item._id}>
@@ -104,7 +111,7 @@ const CartScreen = () => {
         <Modal.Body>
           <p>Number of items: {subtotalItems}</p>
           <p>Total price: ${subtotalPrice}</p>
-          <Pay></Pay>
+          <Pay />
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowModal(false)}>
