@@ -1,19 +1,22 @@
+// Sidebar.js
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { selectLogged, doLogout } from "../reducers/loginSlice"; // Adjust this import based on where your login slice is located
-import { selectCartItems } from "../reducers/cartSlice"; // Adjust based on where your cart slice is located
+import { selectLogged, doLogout } from "../reducers/loginSlice";
+import { selectCartItems } from "../reducers/cartSlice";
 import "../assets/css/Sidebar.css";
 import TranslatorButton from "../components/TranslatorButton";
-import translationAPI from "../APIS/translationAPI"; // Make sure to adjust the path based on your project structure
+import translationAPI from "../APIS/translationAPI";
+import LoaderMain from "../components/LoaderMain"; // Import LoaderMain
 
 const Sidebar = () => {
-  const isLogged = useSelector(selectLogged); // Use the selector to get the login state
-  const cartItems = useSelector(selectCartItems); // Use the selector to get the cart items
+  const isLogged = useSelector(selectLogged);
+  const cartItems = useSelector(selectCartItems);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(localStorage.getItem("selectedLanguage") || "");
+  const [loading, setLoading] = useState(false); // State to manage loader visibility
 
   useEffect(() => {
     if (selectedLanguage) {
@@ -22,6 +25,7 @@ const Sidebar = () => {
   }, [selectedLanguage]);
 
   const translateDOM = async (node, language) => {
+    setLoading(true); // Show loader
     const textNodes = [];
     const gatherTextNodes = (node) => {
       if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
@@ -46,30 +50,31 @@ const Sidebar = () => {
       localStorage.setItem("translatedTextNodes", JSON.stringify(textNodes.map(node => node.textContent)));
     } catch (error) {
       console.error("Error translating text:", error);
+    } finally {
+      setTimeout(() => setLoading(false), 4000); // Hide loader after 4 seconds
     }
   };
 
   const handleProfileClick = () => {
-    navigate("/profile"); // Navigate to the profile page
+    navigate("/profile");
   };
 
   const lordIconStyle = {
     width: "60px",
     height: "60px",
-    // additional properties specific to lord-icon can go here
   };
 
   const handleLogout = () => {
-    dispatch(doLogout()); // Dispatch the logout action
+    dispatch(doLogout());
     navigate("/");
-    setRefresh(!refresh); // Redirect to the home page after logging out
+    setRefresh(!refresh);
   };
 
-  // Calculate the total number of items in the cart
   const totalCartItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <div className="sidebar">
+      <LoaderMain loading={loading} /> {/* Add LoaderMain component */}
       <div className="lines">
         <div className="line"></div>
         <div className="line"></div>
@@ -89,7 +94,6 @@ const Sidebar = () => {
       >
         <span className="arshop-button" style={{ fontSize: "24px" }}>
           <i>Nebuja</i>
-          
         </span>
       </Link>
       <ul className="nav-links">
@@ -112,7 +116,6 @@ const Sidebar = () => {
         </li>
 
         {!isLogged ? (
-          // Show login and register buttons if not logged in
           <>
             <li>
               <Link to="/login">
@@ -174,7 +177,7 @@ const Sidebar = () => {
           </ul>
         )}
 
-        <TranslatorButton />
+        <TranslatorButton setLoading={setLoading} /> {/* Pass setLoading to TranslatorButton */}
       </ul>
 
       <div className="promo-message">

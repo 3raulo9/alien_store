@@ -1,13 +1,12 @@
+// TranslatorButton.js
 import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleFontFamily, setSelectedLanguage } from "../reducers/translatorSlice";
-import { selectProductLoading } from "../reducers/productSlice";
 import translationAPI from "../APIS/translationAPI";
 
-const TranslatorButton = () => {
+const TranslatorButton = ({ setLoading }) => {
   const dispatch = useDispatch();
   const { selectedLanguage } = useSelector((state) => state.translation);
-  const productLoading = useSelector(selectProductLoading);
   const [languageInput, setLanguageInput] = useState("");
 
   useEffect(() => {
@@ -15,13 +14,11 @@ const TranslatorButton = () => {
     if (storedLanguage) {
       dispatch(setSelectedLanguage(storedLanguage));
       setLanguageInput(storedLanguage);
-      if (!productLoading) {
-        translateDOM(document.body, storedLanguage);
-      }
     }
-  }, [dispatch, productLoading]);
+  }, [dispatch]);
 
   const translateDOM = useCallback(async (node, language) => {
+    setLoading(true); // Show loader
     const textNodes = [];
     const gatherTextNodes = (node) => {
       if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
@@ -46,12 +43,14 @@ const TranslatorButton = () => {
       localStorage.setItem("translatedTextNodes", JSON.stringify(textNodes.map(node => node.textContent)));
     } catch (error) {
       console.error("Error translating text:", error);
+    } finally {
+      setTimeout(() => setLoading(false), 4000); // Hide loader after 4 seconds
     }
-  }, []);
+  }, [setLoading]);
 
   const handleTranslation = () => {
-    localStorage.setItem("selectedLanguage", selectedLanguage);
-    translateDOM(document.body, selectedLanguage);
+    localStorage.setItem("selectedLanguage", languageInput);
+    translateDOM(document.body, languageInput);
   };
 
   const toggleFont = () => {
@@ -60,7 +59,6 @@ const TranslatorButton = () => {
 
   const handleLanguageChange = (e) => {
     setLanguageInput(e.target.value);
-    dispatch(setSelectedLanguage(e.target.value));
   };
 
   useEffect(() => {
@@ -162,9 +160,9 @@ const TranslatorButton = () => {
                       ></path>
                       <path
                         id="Vector_4"
-                        stroke="#2eff99"
                         strokeLinecap="round"
                         strokeLinejoin="round"
+                        stroke="#2eff99"
                         d="M8.571428571428571 24.642857142857142h4.285714285714286"
                         strokeWidth="1"
                       ></path>
