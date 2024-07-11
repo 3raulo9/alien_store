@@ -1,3 +1,5 @@
+import { createAsyncThunk } from "@reduxjs/toolkit";
+
 export const registerUser = async (userData) => {
     try {
       const response = await fetch('register/', {
@@ -19,4 +21,26 @@ export const registerUser = async (userData) => {
       throw error;
     }
   };
-  
+    
+  export const getUser = createAsyncThunk(
+    'user/getUser',
+    async (id, { rejectWithValue }) => {
+      try {
+        const response = await fetch(`user/${id}/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to get user');
+        }
+    
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        return rejectWithValue(error.message);
+      }
+    }
+  );

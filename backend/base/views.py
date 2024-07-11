@@ -26,30 +26,70 @@ def logout_view(request):
     logout(request)
     return Response('User logout')
 
-class ProfileView(APIView):
+class ProfileList(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        profile = Profile.objects.get(user=request.user)
+        profiles = Profile.objects.all()
+        serializer = ProfileSerializer(profiles, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = ProfileSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class GetUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
+
+
+class ProfileDetail(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, user_id):
+        try:
+            return Profile.objects.get(user__id=user_id)
+        except Profile.DoesNotExist:
+            return None
+
+    def get(self, request, user_id):
+        try:
+            profile = Profile.objects.get(user_id=user_id)
+        except Profile.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
         serializer = ProfileSerializer(profile)
         return Response(serializer.data)
 
-    def put(self, request):
-        profile = Profile.objects.get(user=request.user)
-        serializer = ProfileSerializer(profile, data=request.data)
+    def put(self, request, user_id):
+        profile = self.get_object(user_id)
+        if profile is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if profile.user != request.user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        serializer = ProfileSerializer(profile, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def post(self, request):
-        serializer = ProfileSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def delete(self, request, user_id):
+        profile = self.get_object(user_id)
+        if profile is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if profile.user != request.user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        profile.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+    
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):

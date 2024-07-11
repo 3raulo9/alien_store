@@ -56,7 +56,6 @@ const Sidebar = () => {
   const lordIconStyle = {
     width: "60px",
     height: "60px",
-    // additional properties specific to lord-icon can go here
   };
 
   const handleLogout = () => {
@@ -79,23 +78,15 @@ const Sidebar = () => {
       <Link
         to="/"
         className="brand-logo"
-        style={{
-          marginLeft: "7px",
-          color: "#21d07a",
-          textShadow:
-            "0 0 0.75px rgba(0, 255, 0, 0.7), 0 0 1.5px rgba(0, 255, 0, 0.5), 0 0 2.25px rgba(0, 255, 0, 0.3)",
-          fontSize: "24px",
-        }}
       >
-        <span className="arshop-button" style={{ fontSize: "24px" }}>
+        <span className="arshop-button">
           <i>Nebuja</i>
-          
         </span>
       </Link>
       <ul className="nav-links">
         <li>
           <Link to="/cart/">
-            <li className="hover-effect" style={{ position: 'relative' }}>
+            <div className="hover-effect link-button" style={{ position: 'relative' }}>
               <lord-icon
                 style={lordIconStyle}
                 src="https://cdn.lordicon.com/odavpkmb.json"
@@ -107,7 +98,7 @@ const Sidebar = () => {
               )}
               <div style={{ margin: `${5}px` }}></div>
               <i>CART</i>
-            </li>
+            </div>
           </Link>
         </li>
 
@@ -116,7 +107,7 @@ const Sidebar = () => {
           <>
             <li>
               <Link to="/login">
-                <li className="hover-effect">
+                <div className="hover-effect link-button">
                   <lord-icon
                     style={lordIconStyle}
                     src="https://cdn.lordicon.com/uecgmesg.json"
@@ -126,12 +117,12 @@ const Sidebar = () => {
                   ></lord-icon>
                   <div style={{ margin: `${5}px` }}></div>
                   <i>LOGIN</i>
-                </li>
+                </div>
               </Link>
             </li>
             <li>
               <Link to="/register">
-                <li className="hover-effect">
+                <div className="hover-effect link-button">
                   <lord-icon
                     style={lordIconStyle}
                     src="https://cdn.lordicon.com/wzwygmng.json"
@@ -140,14 +131,14 @@ const Sidebar = () => {
                   ></lord-icon>
                   <div style={{ margin: `${5}px` }}></div>
                   <i>REGISTER</i>
-                </li>
+                </div>
               </Link>
             </li>
           </>
         ) : (
           <ul className="nav-links">
             <Link to="/profile">
-              <li className="hover-effect">
+              <div className="hover-effect link-button">
                 <lord-icon
                   style={lordIconStyle}
                   src="https://cdn.lordicon.com/kzrjvkoe.json"
@@ -156,7 +147,7 @@ const Sidebar = () => {
                 ></lord-icon>
                 <div style={{ margin: `${5}px` }}></div>
                 <i>Profile</i>
-              </li>
+              </div>
             </Link>
 
             <Link onClick={handleLogout}>
@@ -175,6 +166,7 @@ const Sidebar = () => {
         )}
 
         <TranslatorButton />
+        
       </ul>
 
       <div className="promo-message">

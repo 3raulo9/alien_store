@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Row, Col } from "react-bootstrap";
 import Product from '../components/Product';
 import { fetchProducts } from '../APIS/productAPI';
-import translationAPI from '../APIS/translationAPI';
 import { useSelector } from 'react-redux';
 
 const HomeScreen = () => {

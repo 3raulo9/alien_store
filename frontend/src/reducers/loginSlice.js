@@ -1,5 +1,3 @@
-// src/slices/loginSlice.js
-
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fetchLogin, fetchLogout } from '../APIS/loginAPI';
 
@@ -7,7 +5,7 @@ const initialState = {
   loading: false,
   logged: localStorage.getItem('accessToken') ? true : false,
   Token: localStorage.getItem('accessToken') || '',
-  user: null, // You'll probably want to handle user info in a similar way
+  user: null,  // User info will be handled here
 };
 
 export const doLoginAsync = createAsyncThunk(
@@ -28,15 +26,15 @@ export const doLogout = createAsyncThunk(
     try {
       const state = getState();
       const refreshToken = state.login.Token;
-      const response = await fetchLogout(refreshToken);
-      return response.data;
+      await fetchLogout(refreshToken);
+      return refreshToken;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
   }
 );
 
-export const loginSlice = createSlice({
+const loginSlice = createSlice({
   name: 'login',
   initialState,
   reducers: {
@@ -58,8 +56,9 @@ export const loginSlice = createSlice({
         state.Token = action.payload.access;
         state.logged = true;
         state.loading = false;
-        state.user = action.payload.user;
+        state.user = action.payload.user;  // Save user info
         localStorage.setItem('accessToken', action.payload.access);
+        localStorage.setItem('refreshToken', action.payload.refresh);
       })
       .addCase(doLoginAsync.rejected, (state, action) => {
         state.loading = false;
@@ -67,11 +66,11 @@ export const loginSlice = createSlice({
       .addCase(doLogout.pending, (state) => {
         state.loading = true;
       })
-      .addCase(doLogout.fulfilled, (state) => {
+      .addCase(doLogout.fulfilled, (state, action) => {
         state.Token = '';
         state.logged = false;
         state.loading = false;
-        state.user = null;
+        state.user = null;  // Clear user info
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
       })
@@ -86,6 +85,6 @@ export const { reset } = loginSlice.actions;
 export const selectToken = (state) => state.login.Token;
 export const selectLogged = (state) => state.login.logged;
 export const selectLoading = (state) => state.login.loading;
-export const selectUser = (state) => state.login.user;
+export const selectUser = (state) => state.login.user;  // Selector for user info
 
 export default loginSlice.reducer;

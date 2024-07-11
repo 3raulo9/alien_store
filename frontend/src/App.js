@@ -26,6 +26,7 @@ function App() {
               <Route path="/product/:id" element={<ProductScreen />} />
               <Route path="/cart/" element={<CartScreen/>} />
               <Route path="/profile/" element={<ProfileScreen/>} />
+              <Route path="/profile/:id" element={<ProfileScreen />} />
 
               {/* Additional routes as needed */}
             </Routes>

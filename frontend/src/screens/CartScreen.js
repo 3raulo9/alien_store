@@ -39,7 +39,7 @@ const CartScreen = () => {
     setShowModal(true);
   };
 
-  const token = localStorage.getItem('token');
+
 
   return (
     <div>
