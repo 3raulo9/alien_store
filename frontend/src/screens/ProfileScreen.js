@@ -1,9 +1,11 @@
+// src/screens/ProfileScreen.js
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Image, ListGroup, Card, Button, Form } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getProfile, saveProfile, selectProfile, selectProfileLoading, selectProfileError } from '../reducers/profileSlice';
-import { selectUser, selectToken } from '../reducers/loginSlice';
+import { selectToken } from '../reducers/loginSlice';
+import { fetchUser, selectUser, selectStatus, selectError } from '../reducers/getUserSlice';
 
 const ProfileScreen = () => {
   const { user_id } = useParams(); // Get the user_id from the URL parameters
@@ -13,6 +15,8 @@ const ProfileScreen = () => {
   const error = useSelector(selectProfileError);
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
+  const status = useSelector(selectStatus);
+  const fetchUserError = useSelector(selectError);
   const [formData, setFormData] = useState({
     username: '',
     name: '',
@@ -21,17 +25,30 @@ const ProfileScreen = () => {
   });
 
   useEffect(() => {
-    console.log(profile)
+    // Fetch the user data if not already available
+    if (!user && token) {
+      dispatch(fetchUser(token));
+    }
+  }, [dispatch, token, user]);
+
+  useEffect(() => {
+    if (status === 'succeeded' && user) {
+      console.log('Fetched user data:', user);
+    } else if (fetchUserError) {
+      console.error('Error fetching user data:', fetchUserError);
+    }
+  }, [status, user, fetchUserError]);
+
+  useEffect(() => {
     if (user_id || user) {
-      const id = user_id || profile.id;
-      console.log(user_id);
+      const id = user_id || user.id;
+      console.log('Fetching profile for user id:', id);
       dispatch(getProfile(id));
     }
   }, [dispatch, user_id, user]);
 
   useEffect(() => {
     if (profile) {
-      console.log(profile);
       setFormData({
         username: profile.username || '',
         name: profile.name || '',
@@ -168,13 +185,3 @@ const ProfileScreen = () => {
 };
 
 export default ProfileScreen;
-// import React from 'react'
-// import Test from './Test'
-
-// const ProfileScreen = () => {
-//   return (
-//     <Test></Test>
-//   )
-// }
-
-// export default ProfileScreen

@@ -1,27 +1,13 @@
-// reducers/userSlice.js
-
+// src/features/user/getUserSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { registerUser, getUser as fetchUser } from '../APIS/registerAPI';
+import { getUser } from '../APIS/getUserAPI';
 
-export const register = createAsyncThunk(
-  'user/register',
-  async (userData, { rejectWithValue }) => {
+export const fetchUser = createAsyncThunk(
+  'user/fetchUser',
+  async (token, { rejectWithValue }) => {
     try {
-      const data = await registerUser(userData);
-      return data;
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
-
-export const getUser = createAsyncThunk(
-  'user/getUser',
-  async (id, { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem('accessToken');
-      const data = await fetchUser(id, token);
-      return data;
+      const response = await getUser(token);
+      return response;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -31,38 +17,29 @@ export const getUser = createAsyncThunk(
 const getUserSlice = createSlice({
   name: 'user',
   initialState: {
+    user: null,
     status: 'idle',
     error: null,
-    data: null,
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(register.pending, (state) => {
+      .addCase(fetchUser.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(register.fulfilled, (state, action) => {
+      .addCase(fetchUser.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.data = action.payload;
+        state.user = action.payload;
       })
-      .addCase(register.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload;
-      })
-      .addCase(getUser.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(getUser.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.data = action.payload;
-      })
-      .addCase(getUser.rejected, (state, action) => {
+      .addCase(fetchUser.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
       });
   },
 });
 
-export const selectUser = (state) => state.user?.data;  // Safely access `data`
+export const selectUser = (state) => state.user.user;
+export const selectStatus = (state) => state.user.status;
+export const selectError = (state) => state.user.error;
 
 export default getUserSlice.reducer;

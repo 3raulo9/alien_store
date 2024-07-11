@@ -9,6 +9,7 @@ import translatorReducer from '../reducers/translatorSlice';
 import profileReducer from '../reducers/profileSlice';
 import getUserReducer from '../reducers/getUserSlice';
 
+
 export const store = configureStore({
   reducer: {
     product: productReducer,
@@ -17,7 +18,7 @@ export const store = configureStore({
     register: registerReducer,
     translation: translatorReducer,
     profiles: profileReducer,
-    getUser: getUserReducer, 
+    user: getUserReducer, 
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
 });
