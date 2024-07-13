@@ -4,6 +4,7 @@ import { fetchCartItemsAsync, removeFromCartAsync, checkoutAsync, selectCartItem
 import { Row, Col, ListGroup, Image, Button, Card, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Pay from '../components/Pay';
+import AdminScreen from './AdminScreen';
 
 const CartScreen = () => {
   const dispatch = useDispatch();
@@ -43,6 +44,7 @@ const CartScreen = () => {
 
   return (
     <div>
+      <AdminScreen></AdminScreen>
       <h1>Shopping Cart</h1>
       {loading ? (
         <p>Loading...</p>

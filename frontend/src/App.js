@@ -11,6 +11,7 @@ import Login from "./screens/Login";
 import { Routes, Route } from "react-router-dom"; // Import Routes and Route directly, not Router
 import CartScreen from "./screens/CartScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+import AdminScreen from "./screens/AdminScreen";
 
 function App() {
   return (
@@ -27,6 +28,8 @@ function App() {
               <Route path="/cart/" element={<CartScreen/>} />
               <Route path="/profile/" element={<ProfileScreen/>} />
               <Route path="/profile/:id" element={<ProfileScreen />} />
+              <Route path="/adminActions" component={<AdminScreen/>} />
+
 
               {/* Additional routes as needed */}
             </Routes>

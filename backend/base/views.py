@@ -19,7 +19,19 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 import threading
 from .models import CartItem, Product
+from rest_framework import generics, status
 
+
+class ProductListCreate(generics.ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    
+
+
+class ProductRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    
 
 @api_view(['POST'])
 def logout_view(request):
@@ -70,10 +82,12 @@ class ProfileDetail(APIView):
 
     def put(self, request, user_id):
         profile = self.get_object(user_id)
-        if profile is None:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        if not profile:
+            profile = Profile.objects.create(user=request.user, username=request.user.username, email=request.user.email)
+
         if profile.user != request.user:
             return Response(status=status.HTTP_403_FORBIDDEN)
+        
         serializer = ProfileSerializer(profile, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -129,17 +143,9 @@ def register(request):
     except Exception as e:
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET'])
-def getProducts(req):
-    products = Product.objects.all()
-    serializer = ProductSerializer(products, many=True)
-    return Response(serializer.data)
 
-@api_view(['GET'])
-def getProduct(req, pk):
-    product = Product.objects.get(_id=pk)
-    serializer = ProductSerializer(product, many=False)
-    return Response(serializer.data)
+
+
 
 selected_language = None
 
