@@ -1,16 +1,19 @@
 // src/screens/AdminScreen.js
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, Form, ListGroup, Row, Col, Image } from 'react-bootstrap';
+import { Button, Form, ListGroup, Row, Col, Image, Alert } from 'react-bootstrap';
 import { fetchProductsAsync, addProductAsync, updateProductAsync, deleteProductAsync, selectProducts } from '../reducers/productSlice';
 import { selectToken } from '../reducers/loginSlice';
 import { fetchUser, selectUser } from '../reducers/getUserSlice';
+import { register } from '../reducers/registerSlice';
+import NoToken from '../components/NoToken';
 
 const AdminScreen = () => {
   const dispatch = useDispatch();
   const products = useSelector(selectProducts);
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
+
   const [formData, setFormData] = useState({
     name: '',
     price: '',
@@ -20,8 +23,19 @@ const AdminScreen = () => {
     countInStock: '',
     image: null,
   });
+
+  const [userData, setUserData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    is_staff: false,
+  });
+
   const [editProductId, setEditProductId] = useState(null);
   const [originalImage, setOriginalImage] = useState(null);
+
+  const [productAlert, setProductAlert] = useState({ show: false, message: '', variant: '' });
+  const [userAlert, setUserAlert] = useState({ show: false, message: '', variant: '' });
 
   useEffect(() => {
     if (token) {
@@ -35,10 +49,6 @@ const AdminScreen = () => {
     }
   }, [dispatch, user]);
 
-  useEffect(() => {
-    console.log(user, token);
-  }, [user, token]);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -48,30 +58,61 @@ const AdminScreen = () => {
     setFormData({ ...formData, image: e.target.files[0] });
   };
 
-  if (!user || !user.is_staff) {
-    return <div>Access Denied</div>;
-  }
-
-  const handleAddProduct = (e) => {
-    e.preventDefault();
-    const data = new FormData();
-    Object.keys(formData).forEach((key) => {
-      data.append(key, formData[key]);
-    });
-
-    dispatch(addProductAsync(data));
-    resetForm();
+  const handleUserChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setUserData({ ...userData, [name]: type === 'checkbox' ? checked : value });
   };
 
-  const handleUpdateProduct = (e) => {
+  if (!user || !user.is_staff) {
+    return (
+      <div>
+        <NoToken />
+        If you have already logged in, please note that only staff members can enter this page.
+      </div>
+    );
+  }
+
+  const handleAddProduct = async (e) => {
     e.preventDefault();
     const data = new FormData();
     Object.keys(formData).forEach((key) => {
       data.append(key, formData[key]);
     });
 
-    dispatch(updateProductAsync({ id: editProductId, product: data }));
-    resetForm();
+    try {
+      await dispatch(addProductAsync(data)).unwrap();
+      setProductAlert({ show: true, message: 'Product added successfully!', variant: 'success' });
+      resetForm();
+    } catch (error) {
+      setProductAlert({ show: true, message: 'Failed to add product.', variant: 'danger' });
+    }
+  };
+
+  const handleUpdateProduct = async (e) => {
+    e.preventDefault();
+    const data = new FormData();
+    Object.keys(formData).forEach((key) => {
+      data.append(key, formData[key]);
+    });
+
+    try {
+      await dispatch(updateProductAsync({ id: editProductId, product: data })).unwrap();
+      setProductAlert({ show: true, message: 'Product updated successfully!', variant: 'success' });
+      resetForm();
+    } catch (error) {
+      setProductAlert({ show: true, message: 'Failed to update product.', variant: 'danger' });
+    }
+  };
+
+  const handleRegisterUser = async (e) => {
+    e.preventDefault();
+    try {
+      await dispatch(register(userData)).unwrap();
+      setUserAlert({ show: true, message: 'User registered successfully!', variant: 'success' });
+      resetUserForm();
+    } catch (error) {
+      setUserAlert({ show: true, message: 'Failed to register user.', variant: 'danger' });
+    }
   };
 
   const resetForm = () => {
@@ -88,6 +129,15 @@ const AdminScreen = () => {
     setOriginalImage(null);
   };
 
+  const resetUserForm = () => {
+    setUserData({
+      username: '',
+      email: '',
+      password: '',
+      is_staff: false,
+    });
+  };
+
   const handleEdit = (product) => {
     setFormData({
       name: product.name,
@@ -102,8 +152,13 @@ const AdminScreen = () => {
     setEditProductId(product._id);
   };
 
-  const handleDelete = (productId) => {
-    dispatch(deleteProductAsync(productId));
+  const handleDelete = async (productId) => {
+    try {
+      await dispatch(deleteProductAsync(productId)).unwrap();
+      setProductAlert({ show: true, message: 'Product deleted successfully!', variant: 'success' });
+    } catch (error) {
+      setProductAlert({ show: true, message: 'Failed to delete product.', variant: 'danger' });
+    }
   };
 
   const isFormComplete = () => {
@@ -122,6 +177,12 @@ const AdminScreen = () => {
     <div className="container mt-5">
       <Row>
         <Col md={6}>
+          <h2 style={{ color: 'green' }}>Product Management</h2>
+          {productAlert.show && (
+            <Alert variant={productAlert.variant} onClose={() => setProductAlert({ show: false, message: '', variant: '' })} dismissible>
+              {productAlert.message}
+            </Alert>
+          )}
           <Form>
             <Form.Group controlId="name">
               <Form.Label>Name</Form.Label>
@@ -196,7 +257,6 @@ const AdminScreen = () => {
                   type="submit"
                   className="mt-3"
                   onClick={handleUpdateProduct}
-                  disabled={!isFormComplete()}
                 >
                   Update Product
                 </Button>
@@ -221,7 +281,7 @@ const AdminScreen = () => {
           </Form>
         </Col>
         <Col md={6}>
-          <h2 style={{ color: 'white' }}>Products</h2>
+          <h2 style={{ color: 'green' }}>Products</h2>
           <ListGroup>
             {products.map((product) => (
               <ListGroup.Item key={product._id}>
@@ -246,6 +306,57 @@ const AdminScreen = () => {
               </ListGroup.Item>
             ))}
           </ListGroup>
+        </Col>
+      </Row>
+      <Row className="mt-5">
+        <Col md={6}>
+          <h2 style={{ color: 'green' }}>Register New User</h2>
+          {userAlert.show && (
+            <Alert variant={userAlert.variant} onClose={() => setUserAlert({ show: false, message: '', variant: '' })} dismissible>
+              {userAlert.message}
+            </Alert>
+          )}
+          <Form onSubmit={handleRegisterUser}>
+            <Form.Group controlId="username">
+              <Form.Label>Username</Form.Label>
+              <Form.Control
+                type="text"
+                name="username"
+                value={userData.username}
+                onChange={handleUserChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="email" className="mt-3">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                name="email"
+                value={userData.email}
+                onChange={handleUserChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="password" className="mt-3">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="password"
+                name="password"
+                value={userData.password}
+                onChange={handleUserChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="is_staff" className="mt-3">
+              <Form.Check
+                type="checkbox"
+                name="is_staff"
+                label="Register as staff"
+                checked={userData.is_staff}
+                onChange={handleUserChange}
+              />
+            </Form.Group>
+            <Button type="submit" className="mt-3">
+              Register User
+            </Button>
+          </Form>
         </Col>
       </Row>
     </div>

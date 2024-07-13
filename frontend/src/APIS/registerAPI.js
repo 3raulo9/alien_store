@@ -1,3 +1,4 @@
+// src/APIS/registerAPI.js
 export const registerUser = async (userData) => {
   try {
     const response = await fetch('register/', {

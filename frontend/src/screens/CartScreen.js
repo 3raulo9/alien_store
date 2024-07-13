@@ -1,23 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCartItemsAsync, removeFromCartAsync, checkoutAsync, selectCartItems, selectCartLoading, selectCartError } from '../reducers/cartSlice';
+import { selectToken } from '../reducers/loginSlice';
 import { Row, Col, ListGroup, Image, Button, Card, Modal } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import NoToken from '../components/NoToken';
 import Pay from '../components/Pay';
-import AdminScreen from './AdminScreen';
 
 const CartScreen = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector(selectCartItems);
   const loading = useSelector(selectCartLoading);
   const error = useSelector(selectCartError);
+  const token = useSelector(selectToken);
   const [showModal, setShowModal] = useState(false);
   const [subtotalItems, setSubtotalItems] = useState(0);
   const [subtotalPrice, setSubtotalPrice] = useState(0);
 
   useEffect(() => {
-    dispatch(fetchCartItemsAsync());
-  }, [dispatch]);
+    if (token) {
+      dispatch(fetchCartItemsAsync());
+    }
+  }, [dispatch, token]);
 
   useEffect(() => {
     const items = cartItems.reduce((acc, item) => acc + item.quantity, 0);
@@ -40,12 +43,13 @@ const CartScreen = () => {
     setShowModal(true);
   };
 
-
+  if (!token) {
+    return <NoToken />;
+  }
 
   return (
     <div>
-      <AdminScreen></AdminScreen>
-      <h1>Shopping Cart</h1>
+      <h1 style={{ color: 'green' }}>Shopping Cart</h1>
       {loading ? (
         <p>Loading...</p>
       ) : error ? (

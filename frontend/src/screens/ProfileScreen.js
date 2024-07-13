@@ -6,6 +6,8 @@ import { useParams } from 'react-router-dom';
 import { getProfile, saveProfile, selectProfile, selectProfileLoading, selectProfileError } from '../reducers/profileSlice';
 import { selectToken } from '../reducers/loginSlice';
 import { fetchUser, selectUser, selectStatus, selectError } from '../reducers/getUserSlice';
+import NoToken from '../components/NoToken';
+import AdminScreen from './AdminScreen';
 
 const ProfileScreen = () => {
   const { user_id } = useParams(); // Get the user_id from the URL parameters
@@ -87,8 +89,13 @@ const ProfileScreen = () => {
     { id: 3, item: 'Alien thing 3', date: '2023-03-05', amount: '$20' }
   ];
 
-  return (
+  if (!token) {
+    return <NoToken />;
+  }
+
+  return ( 
     <div className="container mt-5">
+      <AdminScreen></AdminScreen>
       {loading ? (
         <div>Loading...</div>
       ) : error ? (

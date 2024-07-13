@@ -133,7 +133,7 @@ def register(request):
             password=request.data['password']
         )
         user.is_active = True
-        user.is_staff = False
+        user.is_staff = request.data.get('is_staff', False)
         user.save()
         refresh = RefreshToken.for_user(user)
         return Response({

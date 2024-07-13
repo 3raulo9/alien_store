@@ -72,6 +72,8 @@ const ProductScreen = () => {
     }, 3000);
   };
 
+
+
   return (
     <div>
       <Row>

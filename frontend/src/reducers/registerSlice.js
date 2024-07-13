@@ -1,3 +1,4 @@
+// src/features/user/registerSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { registerUser } from '../APIS/registerAPI';
 

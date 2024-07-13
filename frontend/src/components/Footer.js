@@ -15,7 +15,7 @@ const Footer = () => {
       <Container>
         <Row>
           <Col>
-            COPYRIGHT © 2024 RAUL ASADOV - ALL RIGHTS RESERVED.
+            COPYRIGHT © 2024 RAUL ASADOV, ALMOG RAGUAN - ALL RIGHTS RESERVED.
           </Col>
         </Row>
       </Container>
