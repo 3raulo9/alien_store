@@ -1,50 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Card } from "react-bootstrap";
 import Rating from "./Rating";
 import { Link } from "react-router-dom";
-import translationAPI from "../APIS/translationAPI"; // Import your translation API utility
 import { useSelector } from "react-redux";
+
 
 const Product = ({ product }) => {
   const [translatedName, setTranslatedName] = useState(product.name);
   const [translatedPrice, setTranslatedPrice] = useState(`$ ${product.price}`);
   const [translatedReviews, setTranslatedReviews] = useState(`${product.numReviews} reviews`);
   const [loading, setLoading] = useState(false);
-  const selectedLanguage = useSelector((state) => state.translation.selectedLanguage);
 
-  useEffect(() => {
-    const translateProduct = async () => {
-      if (selectedLanguage && selectedLanguage !== 'en') {
-        setLoading(true);
-        try {
-          // Translate product details
-          const textsToTranslate = [
-            product.name,
-            `$${product.price}`,
-            `${product.numReviews} reviews`,
-          ];
-
-          const translatedTexts = await translationAPI.translateBatch(textsToTranslate, selectedLanguage);
-          const [name, price, reviews] = translatedTexts;
-
-          setTranslatedName(name);
-          setTranslatedPrice(price);
-          setTranslatedReviews(reviews);
-        } catch (error) {
-          console.error("Error translating product details:", error);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        setTranslatedName(product.name);
-        setTranslatedPrice(`$ ${product.price}`);
-        setTranslatedReviews(`${product.numReviews} reviews`);
-      }
-    };
-
-    translateProduct();
-  }, [selectedLanguage, product]);
-
+  
   return (
     <Card
       className="my-4 p-2"

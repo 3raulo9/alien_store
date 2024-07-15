@@ -24,3 +24,12 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = '__all__'
+
+
+from rest_framework import serializers
+from .models import OrderHistory
+
+class OrderHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderHistory
+        fields = ['id', 'user', 'items', 'created_at']

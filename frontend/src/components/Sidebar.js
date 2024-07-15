@@ -5,7 +5,7 @@ import { selectLogged, doLogout } from "../reducers/loginSlice"; // Adjust this 
 import { selectCartItems } from "../reducers/cartSlice"; // Adjust based on where your cart slice is located
 import "../assets/css/Sidebar.css";
 import TranslatorButton from "../components/TranslatorButton";
-import translationAPI from "../APIS/translationAPI"; // Make sure to adjust the path based on your project structure
+ // Make sure to adjust the path based on your project structure
 
 const Sidebar = () => {
   const isLogged = useSelector(selectLogged); // Use the selector to get the login state
@@ -15,39 +15,39 @@ const Sidebar = () => {
   const [refresh, setRefresh] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(localStorage.getItem("selectedLanguage") || "");
 
-  useEffect(() => {
-    if (selectedLanguage) {
-      translateDOM(document.body, selectedLanguage);
-    }
-  }, [selectedLanguage]);
+  // useEffect(() => {
+  //   if (selectedLanguage) {
+  //     translateDOM(document.body, selectedLanguage);
+  //   }
+  // }, [selectedLanguage]);
 
-  const translateDOM = async (node, language) => {
-    const textNodes = [];
-    const gatherTextNodes = (node) => {
-      if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
-        textNodes.push(node);
-      } else {
-        for (const childNode of node.childNodes) {
-          gatherTextNodes(childNode);
-        }
-      }
-    };
+  // const translateDOM = async (node, language) => {
+  //   const textNodes = [];
+  //   const gatherTextNodes = (node) => {
+  //     if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+  //       textNodes.push(node);
+  //     } else {
+  //       for (const childNode of node.childNodes) {
+  //         gatherTextNodes(childNode);
+  //       }
+  //     }
+  //   };
 
-    gatherTextNodes(node);
+  //   gatherTextNodes(node);
 
-    const textsToTranslate = textNodes.map((node) => node.textContent.trim());
-    if (textsToTranslate.length === 0) return;
+  //   const textsToTranslate = textNodes.map((node) => node.textContent.trim());
+  //   if (textsToTranslate.length === 0) return;
 
-    try {
-      const translatedTexts = await translationAPI.translateBatch(textsToTranslate, language);
-      textNodes.forEach((node, index) => {
-        node.textContent = translatedTexts[index] || node.textContent;
-      });
-      localStorage.setItem("translatedTextNodes", JSON.stringify(textNodes.map(node => node.textContent)));
-    } catch (error) {
-      console.error("Error translating text:", error);
-    }
-  };
+  //   try {
+  //     const translatedTexts = await translationAPI.translateBatch(textsToTranslate, language);
+  //     textNodes.forEach((node, index) => {
+  //       node.textContent = translatedTexts[index] || node.textContent;
+  //     });
+  //     localStorage.setItem("translatedTextNodes", JSON.stringify(textNodes.map(node => node.textContent)));
+  //   } catch (error) {
+  //     console.error("Error translating text:", error);
+  //   }
+  // };
 
   const handleProfileClick = () => {
     navigate("/profile"); // Navigate to the profile page

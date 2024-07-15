@@ -8,6 +8,7 @@ import registerReducer from '../reducers/registerSlice';
 import translatorReducer from '../reducers/translatorSlice';
 import profileReducer from '../reducers/profileSlice';
 import getUserReducer from '../reducers/getUserSlice';
+import ordersReducer from '../reducers/getUserSlice';
 
 
 export const store = configureStore({
@@ -16,9 +17,10 @@ export const store = configureStore({
     login: loginReducer,
     cart: cartReducer, 
     register: registerReducer,
-    translation: translatorReducer,
+    translator: translatorReducer,
     profiles: profileReducer,
     user: getUserReducer, 
+    orders: ordersReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
 });

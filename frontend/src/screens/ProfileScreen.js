@@ -1,4 +1,3 @@
-// src/screens/ProfileScreen.js
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Image, ListGroup, Card, Button, Form } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
@@ -6,8 +5,8 @@ import { useParams } from 'react-router-dom';
 import { getProfile, saveProfile, selectProfile, selectProfileLoading, selectProfileError } from '../reducers/profileSlice';
 import { selectToken } from '../reducers/loginSlice';
 import { fetchUser, selectUser, selectStatus, selectError } from '../reducers/getUserSlice';
+import { fetchOrders, selectOrders, selectOrdersStatus, selectOrdersError } from '../reducers/ordersSlice';
 import NoToken from '../components/NoToken';
-import AdminScreen from './AdminScreen';
 
 const ProfileScreen = () => {
   const { user_id } = useParams(); // Get the user_id from the URL parameters
@@ -19,6 +18,9 @@ const ProfileScreen = () => {
   const token = useSelector(selectToken);
   const status = useSelector(selectStatus);
   const fetchUserError = useSelector(selectError);
+  const ordersStatus = useSelector(selectOrdersStatus);
+  const ordersError = useSelector(selectOrdersError);
+  const [orders, setOrders] = useState([]); // Local state for orders
   const [formData, setFormData] = useState({
     username: '',
     name: '',
@@ -60,6 +62,24 @@ const ProfileScreen = () => {
     }
   }, [profile]);
 
+  useEffect(() => {
+    const fetchOrderData = async () => {
+      if (token) {
+        try {
+          const resultAction = await dispatch(fetchOrders());
+          if (fetchOrders.fulfilled.match(resultAction)) {
+            setOrders(resultAction.payload); // Set the orders data to local state
+          } else {
+            console.error('Failed to fetch orders:', resultAction.payload);
+          }
+        } catch (error) {
+          console.error('Error fetching orders:', error);
+        }
+      }
+    };
+    fetchOrderData();
+  }, [dispatch, token]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -83,19 +103,12 @@ const ProfileScreen = () => {
     dispatch(saveProfile({ id: user_id || user.id, profileData: data, token }));
   };
 
-  const purchaseHistory = [
-    { id: 1, item: 'Alien thing 1', date: '2023-01-01', amount: '$50' },
-    { id: 2, item: 'Alien thing 2', date: '2023-02-15', amount: '$30' },
-    { id: 3, item: 'Alien thing 3', date: '2023-03-05', amount: '$20' }
-  ];
-
   if (!token) {
     return <NoToken />;
   }
 
   return ( 
     <div className="container mt-5">
-      <AdminScreen></AdminScreen>
       {loading ? (
         <div>Loading...</div>
       ) : error ? (
@@ -169,19 +182,32 @@ const ProfileScreen = () => {
             <Card className="mb-4">
               <Card.Body>
                 <Card.Title>Purchase History</Card.Title>
-                <ListGroup>
-                  {purchaseHistory.map((purchase) => (
-                    <ListGroup.Item key={purchase.id}>
-                      <div className="d-flex justify-content-between">
-                        <div>
-                          <h6>{purchase.item}</h6>
-                          <small>{purchase.date}</small>
-                        </div>
-                        <div>{purchase.amount}</div>
-                      </div>
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
+                {ordersStatus === 'loading' ? (
+                  <div>Loading orders...</div>
+                ) : ordersError ? (
+                  <div>Error loading orders: {ordersError}</div>
+                ) : (
+                  <ListGroup>
+                    {orders && orders.length > 0 ? (
+                      orders.map((order) => (
+                        <ListGroup.Item key={order.id}>
+                          <div className="d-flex justify-content-between">
+                            <div>
+                              <h6>Order ID: {order.id}</h6>
+                              <p>Order Date: {new Date(order.created_at).toLocaleDateString()}</p>
+                              <p>Number of Items: {order.items.length}</p>
+                            </div>
+                            <div>
+                              Total: ${order.items.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2)}
+                            </div>
+                          </div>
+                        </ListGroup.Item>
+                      ))
+                    ) : (
+                      <div>No orders found</div>
+                    )}
+                  </ListGroup>
+                )}
               </Card.Body>
             </Card>
           </Col>

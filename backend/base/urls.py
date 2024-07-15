@@ -17,6 +17,7 @@ urlpatterns = [
     path('profiles/', ProfileList.as_view(), name='profile-list'),
     path('profiles/<int:user_id>/', ProfileDetail.as_view(), name='profile-detail'),
     path('user/', GetUserView.as_view(), name='get_user'),
+     path('orders/', get_orders, name='get_orders'),
 ]
 
 

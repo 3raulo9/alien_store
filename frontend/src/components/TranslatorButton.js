@@ -1,57 +1,35 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleFontFamily, setSelectedLanguage } from "../reducers/translatorSlice";
-import { selectProductLoading } from "../reducers/productSlice";
-import translationAPI from "../APIS/translationAPI";
+import { toggleFontFamily, setSelectedLanguage, translateBatch } from "../reducers/translatorSlice";
+
+const languages = ["en", "es", "fr", "de", "zh", "ru"];
 
 const TranslatorButton = () => {
   const dispatch = useDispatch();
-  const { selectedLanguage } = useSelector((state) => state.translation);
-  const productLoading = useSelector(selectProductLoading);
-  const [languageInput, setLanguageInput] = useState("");
+  const { selectedLanguage } = useSelector((state) => state.translator);
+  const [languageInput, setLanguageInput] = useState(selectedLanguage || "");
+  const [suggestions, setSuggestions] = useState([]);
 
   useEffect(() => {
-    const storedLanguage = localStorage.getItem("selectedLanguage");
-    if (storedLanguage) {
-      dispatch(setSelectedLanguage(storedLanguage));
-      setLanguageInput(storedLanguage);
-      if (!productLoading) {
-        translateDOM(document.body, storedLanguage);
-      }
+    const savedLanguage = localStorage.getItem('selectedLanguage');
+    if (savedLanguage) {
+      dispatch(setSelectedLanguage(savedLanguage));
     }
-  }, [dispatch, productLoading]);
-
-  const translateDOM = useCallback(async (node, language) => {
-    const textNodes = [];
-    const gatherTextNodes = (node) => {
-      if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
-        textNodes.push(node);
-      } else {
-        for (const childNode of node.childNodes) {
-          gatherTextNodes(childNode);
-        }
-      }
-    };
-
-    gatherTextNodes(node);
-
-    const textsToTranslate = textNodes.map((node) => node.textContent.trim());
-    if (textsToTranslate.length === 0) return;
-
-    try {
-      const translatedTexts = await translationAPI.translateBatch(textsToTranslate, language);
-      textNodes.forEach((node, index) => {
-        node.textContent = translatedTexts[index] || node.textContent;
-      });
-      localStorage.setItem("translatedTextNodes", JSON.stringify(textNodes.map(node => node.textContent)));
-    } catch (error) {
-      console.error("Error translating text:", error);
-    }
-  }, []);
+  }, [dispatch]);
 
   const handleTranslation = () => {
-    localStorage.setItem("selectedLanguage", selectedLanguage);
-    translateDOM(document.body, selectedLanguage);
+    if (!languages.includes(languageInput)) {
+      alert("Selected language does not exist!");
+      return;
+    }
+
+    const textElements = Array.from(document.body.querySelectorAll('*'))
+      .filter(el => el.childNodes.length === 1 && el.childNodes[0].nodeType === 3)
+      .map(el => el.innerText);
+
+    dispatch(setSelectedLanguage(languageInput));
+    dispatch(translateBatch({ texts: textElements, language: languageInput }));
+    localStorage.setItem('selectedLanguage', languageInput);
   };
 
   const toggleFont = () => {
@@ -60,15 +38,8 @@ const TranslatorButton = () => {
 
   const handleLanguageChange = (e) => {
     setLanguageInput(e.target.value);
-    dispatch(setSelectedLanguage(e.target.value));
+    setSuggestions(languages.filter(lang => lang.startsWith(e.target.value)));
   };
-
-  useEffect(() => {
-    const storedTextNodes = JSON.parse(localStorage.getItem("translatedTextNodes"));
-    if (storedTextNodes) {
-      translateDOM(document.body, selectedLanguage);
-    }
-  }, [selectedLanguage, translateDOM]);
 
   const imgStyle = {
     filter: "hue-rotate(20deg) saturate(90%)",
@@ -79,7 +50,7 @@ const TranslatorButton = () => {
 
   return (
     <li className="arshop-button">
-      <p className="glow-on-hover">
+      <div className="glow-on-hover">
         <div className="dropdown">
           <button
             className="btn btn-secondary dropdown-toggle"
@@ -118,7 +89,13 @@ const TranslatorButton = () => {
                   placeholder="Human lang"
                   value={languageInput}
                   onChange={handleLanguageChange}
+                  list="language-suggestions"
                 />
+                <datalist id="language-suggestions">
+                  {suggestions.map((lang, index) => (
+                    <option key={index} value={lang} />
+                  ))}
+                </datalist>
                 <button
                   className="btn btn-primary"
                   style={{ marginLeft: "5px" }}
@@ -149,51 +126,18 @@ const TranslatorButton = () => {
                         stroke="#2eff99"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        d="M5.357142857142857 19.285714285714285H2.142857142857143c-0.28416 0 -0.5566821428571428 -0.11288571428571428 -0.7576135714285714 -0.31382142857142853C1.18431 18.77097857142857 1.0714285714285714 18.49845 1.0714285714285714 18.214285714285715v-6.428571428571429c0 -0.2841642857142857 0.11288142857142858 -0.5566928571428572 0.31381499999999996 -0.7576071428571428C1.586175 10.827171428571427 1.8586971428571428 10.714285714285714 2.142857142857143 10.714285714285714h3.2142857142857144"
-                        strokeWidth="1"
-                      ></path>
-                      <path
-                        id="Vector_3"
-                        stroke="#2eff99"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M8.571428571428571 5.357142857142857h4.285714285714286"
-                        strokeWidth="1"
-                      ></path>
-                      <path
-                        id="Vector_4"
-                        stroke="#2eff99"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M8.571428571428571 24.642857142857142h4.285714285714286"
-                        strokeWidth="1"
-                      ></path>
-                      <path
-                        id="Vector_5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        stroke="#2eff99"
-                        d="M10.714285714285714 5.357142857142857v19.285714285714285"
+                        d="M7.5 17.5L12.5 22.5L22.5 12.5"
                         strokeWidth="1"
                       ></path>
                     </g>
                   </svg>
                 </button>
               </div>
-              <p>please enter a human language name to translate the page</p>
             </li>
           </ul>
-          <i
-            style={{
-              color: "white",
-              fontSize: "15px",
-              fontWeight: "normal",
-            }}
-          >
-            Translator
-          </i>
+          Translator
         </div>
-      </p>
+      </div>
     </li>
   );
 };

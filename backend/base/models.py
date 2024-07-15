@@ -1,5 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User,AbstractUser
+from django.utils import timezone
+
+class OrderHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    items = models.JSONField()  # To store the list of items ordered
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Order by {self.user.username} on {self.created_at}"
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True)
