@@ -5,6 +5,7 @@ import { selectToken } from '../reducers/loginSlice';
 import { Row, Col, ListGroup, Image, Button, Card, Modal } from 'react-bootstrap';
 import NoToken from '../components/NoToken';
 import Pay from '../components/Pay';
+import AdminScreen from '../screens/AdminScreen'
 
 const CartScreen = () => {
   const dispatch = useDispatch();
@@ -128,6 +129,7 @@ const CartScreen = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+      <AdminScreen></AdminScreen>
     </div>
   );
 };

@@ -1,4 +1,3 @@
-// src/screens/AdminScreen.js
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Form, ListGroup, Row, Col, Image, Alert } from 'react-bootstrap';
@@ -183,7 +182,7 @@ const AdminScreen = () => {
               {productAlert.message}
             </Alert>
           )}
-          <Form>
+          <Form onSubmit={editProductId ? handleUpdateProduct : handleAddProduct}>
             <Form.Group controlId="name">
               <Form.Label>Name</Form.Label>
               <Form.Control
@@ -251,31 +250,20 @@ const AdminScreen = () => {
                 onChange={handleFileChange}
               />
             </Form.Group>
-            {editProductId ? (
-              <>
-                <Button
-                  type="submit"
-                  className="mt-3"
-                  onClick={handleUpdateProduct}
-                >
-                  Update Product
-                </Button>
-                <Button
-                  variant="secondary"
-                  className="mt-3 ms-2"
-                  onClick={resetForm}
-                >
-                  Go Back
-                </Button>
-              </>
-            ) : (
+            <Button
+              type="submit"
+              className="mt-3"
+              disabled={!isFormComplete()}
+            >
+              {editProductId ? 'Update Product' : 'Add Product'}
+            </Button>
+            {editProductId && (
               <Button
-                type="submit"
-                className="mt-3"
-                onClick={handleAddProduct}
-                disabled={!isFormComplete()}
+                variant="secondary"
+                className="mt-3 ms-2"
+                onClick={resetForm}
               >
-                Add Product
+                Go Back
               </Button>
             )}
           </Form>
