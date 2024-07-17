@@ -1,62 +1,56 @@
-// Sidebar.js
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { selectLogged, doLogout } from "../reducers/loginSlice";
-import { selectCartItems } from "../reducers/cartSlice";
+import { selectLogged, doLogout } from "../reducers/loginSlice"; // Adjust this import based on where your login slice is located
+import { selectCartItems } from "../reducers/cartSlice"; // Adjust based on where your cart slice is located
 import "../assets/css/Sidebar.css";
 import TranslatorButton from "../components/TranslatorButton";
-import translationAPI from "../APIS/translationAPI";
-import LoaderMain from "../components/LoaderMain"; // Import LoaderMain
+ // Make sure to adjust the path based on your project structure
 
 const Sidebar = () => {
-  const isLogged = useSelector(selectLogged);
-  const cartItems = useSelector(selectCartItems);
+  const isLogged = useSelector(selectLogged); // Use the selector to get the login state
+  const cartItems = useSelector(selectCartItems); // Use the selector to get the cart items
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(localStorage.getItem("selectedLanguage") || "");
-  const [loading, setLoading] = useState(false); // State to manage loader visibility
 
-  useEffect(() => {
-    if (selectedLanguage) {
-      translateDOM(document.body, selectedLanguage);
-    }
-  }, [selectedLanguage]);
+  // useEffect(() => {
+  //   if (selectedLanguage) {
+  //     translateDOM(document.body, selectedLanguage);
+  //   }
+  // }, [selectedLanguage]);
 
-  const translateDOM = async (node, language) => {
-    setLoading(true); // Show loader
-    const textNodes = [];
-    const gatherTextNodes = (node) => {
-      if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
-        textNodes.push(node);
-      } else {
-        for (const childNode of node.childNodes) {
-          gatherTextNodes(childNode);
-        }
-      }
-    };
+  // const translateDOM = async (node, language) => {
+  //   const textNodes = [];
+  //   const gatherTextNodes = (node) => {
+  //     if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+  //       textNodes.push(node);
+  //     } else {
+  //       for (const childNode of node.childNodes) {
+  //         gatherTextNodes(childNode);
+  //       }
+  //     }
+  //   };
 
-    gatherTextNodes(node);
+  //   gatherTextNodes(node);
 
-    const textsToTranslate = textNodes.map((node) => node.textContent.trim());
-    if (textsToTranslate.length === 0) return;
+  //   const textsToTranslate = textNodes.map((node) => node.textContent.trim());
+  //   if (textsToTranslate.length === 0) return;
 
-    try {
-      const translatedTexts = await translationAPI.translateBatch(textsToTranslate, language);
-      textNodes.forEach((node, index) => {
-        node.textContent = translatedTexts[index] || node.textContent;
-      });
-      localStorage.setItem("translatedTextNodes", JSON.stringify(textNodes.map(node => node.textContent)));
-    } catch (error) {
-      console.error("Error translating text:", error);
-    } finally {
-      setTimeout(() => setLoading(false), 4000); // Hide loader after 4 seconds
-    }
-  };
+  //   try {
+  //     const translatedTexts = await translationAPI.translateBatch(textsToTranslate, language);
+  //     textNodes.forEach((node, index) => {
+  //       node.textContent = translatedTexts[index] || node.textContent;
+  //     });
+  //     localStorage.setItem("translatedTextNodes", JSON.stringify(textNodes.map(node => node.textContent)));
+  //   } catch (error) {
+  //     console.error("Error translating text:", error);
+  //   }
+  // };
 
   const handleProfileClick = () => {
-    navigate("/profile");
+    navigate("/profile"); // Navigate to the profile page
   };
 
   const lordIconStyle = {
@@ -65,16 +59,16 @@ const Sidebar = () => {
   };
 
   const handleLogout = () => {
-    dispatch(doLogout());
+    dispatch(doLogout()); // Dispatch the logout action
     navigate("/");
-    setRefresh(!refresh);
+    setRefresh(!refresh); // Redirect to the home page after logging out
   };
 
+  // Calculate the total number of items in the cart
   const totalCartItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <div className="sidebar">
-      <LoaderMain loading={loading} /> {/* Add LoaderMain component */}
       <div className="lines">
         <div className="line"></div>
         <div className="line"></div>
@@ -84,22 +78,15 @@ const Sidebar = () => {
       <Link
         to="/"
         className="brand-logo"
-        style={{
-          marginLeft: "7px",
-          color: "#21d07a",
-          textShadow:
-            "0 0 0.75px rgba(0, 255, 0, 0.7), 0 0 1.5px rgba(0, 255, 0, 0.5), 0 0 2.25px rgba(0, 255, 0, 0.3)",
-          fontSize: "24px",
-        }}
       >
-        <span className="arshop-button" style={{ fontSize: "24px" }}>
+        <span className="arshop-button">
           <i>Nebuja</i>
         </span>
       </Link>
       <ul className="nav-links">
         <li>
           <Link to="/cart/">
-            <li className="hover-effect" style={{ position: 'relative' }}>
+            <div className="hover-effect link-button" style={{ position: 'relative' }}>
               <lord-icon
                 style={lordIconStyle}
                 src="https://cdn.lordicon.com/odavpkmb.json"
@@ -111,15 +98,16 @@ const Sidebar = () => {
               )}
               <div style={{ margin: `${5}px` }}></div>
               <i>CART</i>
-            </li>
+            </div>
           </Link>
         </li>
 
         {!isLogged ? (
+          // Show login and register buttons if not logged in
           <>
             <li>
               <Link to="/login">
-                <li className="hover-effect">
+                <div className="hover-effect link-button">
                   <lord-icon
                     style={lordIconStyle}
                     src="https://cdn.lordicon.com/uecgmesg.json"
@@ -129,12 +117,12 @@ const Sidebar = () => {
                   ></lord-icon>
                   <div style={{ margin: `${5}px` }}></div>
                   <i>LOGIN</i>
-                </li>
+                </div>
               </Link>
             </li>
             <li>
               <Link to="/register">
-                <li className="hover-effect">
+                <div className="hover-effect link-button">
                   <lord-icon
                     style={lordIconStyle}
                     src="https://cdn.lordicon.com/wzwygmng.json"
@@ -143,14 +131,14 @@ const Sidebar = () => {
                   ></lord-icon>
                   <div style={{ margin: `${5}px` }}></div>
                   <i>REGISTER</i>
-                </li>
+                </div>
               </Link>
             </li>
           </>
         ) : (
           <ul className="nav-links">
             <Link to="/profile">
-              <li className="hover-effect">
+              <div className="hover-effect link-button">
                 <lord-icon
                   style={lordIconStyle}
                   src="https://cdn.lordicon.com/kzrjvkoe.json"
@@ -159,7 +147,7 @@ const Sidebar = () => {
                 ></lord-icon>
                 <div style={{ margin: `${5}px` }}></div>
                 <i>Profile</i>
-              </li>
+              </div>
             </Link>
 
             <Link onClick={handleLogout}>
@@ -177,7 +165,8 @@ const Sidebar = () => {
           </ul>
         )}
 
-        <TranslatorButton setLoading={setLoading} /> {/* Pass setLoading to TranslatorButton */}
+        <TranslatorButton />
+        
       </ul>
 
       <div className="promo-message">

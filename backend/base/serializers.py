@@ -11,13 +11,25 @@ class CartItemSerializer(serializers.ModelSerializer):
         model = CartItem
         fields = '__all__'
 
-# class CartItemCreateSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = CartItem
-#         fields = ['product', 'quantity']
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email','is_staff']
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(source='user.id', read_only=True)
+    profilePicture = serializers.ImageField(required=False, allow_null=True)
+
     class Meta:
         model = Profile
-        fields = ['id', 'first_name', 'last_name', 'email', 'username', 'image']
+        fields = '__all__'
+
+
+from rest_framework import serializers
+from .models import OrderHistory
+
+class OrderHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderHistory
+        fields = ['id', 'user', 'items', 'created_at']

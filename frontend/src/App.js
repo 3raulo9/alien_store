@@ -1,33 +1,37 @@
-import React, { useState } from "react";
+import React from "react";
 import { Container } from "react-bootstrap";
 import Footer from "./components/Footer";
 import Sidebar from "./components/Sidebar";
-import LoaderMain from "./components/LoaderMain";
+
 import HomeScreen from "./screens/HomeScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import ProductScreen from "./screens/ProductScreen";
+
 import Login from "./screens/Login";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom"; // Import Routes and Route directly, not Router
 import CartScreen from "./screens/CartScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+import AdminScreen from "./screens/AdminScreen";
 
 function App() {
-  const [loading, setLoading] = useState(false);
-
   return (
     <div className="App">
       <Sidebar />
-      <LoaderMain loading={loading} />
       <div className="main-content">
         <main className="py-3">
           <Container>
             <Routes>
               <Route path="/" element={<HomeScreen />} exact />
-              <Route path="/login" element={<Login setLoading={setLoading} />} />
-              <Route path="/register" element={<RegisterScreen setLoading={setLoading} />} />
-              <Route path="/product/:id" element={<ProductScreen setLoading={setLoading} />} />
-              <Route path="/cart/" element={<CartScreen setLoading={setLoading} />} />
-              <Route path="/profile/" element={<ProfileScreen setLoading={setLoading} />} />
+              <Route path="/login" element={<Login />}  />
+              <Route path="/register" element={<RegisterScreen />} />
+              <Route path="/product/:id" element={<ProductScreen />} />
+              <Route path="/cart/" element={<CartScreen/>} />
+              <Route path="/profile/" element={<ProfileScreen/>} />
+              <Route path="/profile/:id" element={<ProfileScreen />} />
+              <Route path="/adminActions" component={<AdminScreen/>} />
+
+
+              {/* Additional routes as needed */}
             </Routes>
           </Container>
         </main>

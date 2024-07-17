@@ -1,12 +1,22 @@
 from django.db import models
 from django.contrib.auth.models import User,AbstractUser
+from django.utils import timezone
+
+class OrderHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    items = models.JSONField()  # To store the list of items ordered
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Order by {self.user.username} on {self.created_at}"
+
 
 class Profile(models.Model):
-    first_name = models.CharField(max_length=30, blank=True)
-    last_name = models.CharField(max_length=150, blank=True)
-    email = models.EmailField(unique=True)
-    username = models.CharField(max_length=150, unique=True)
-    image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True)
+    profilePicture = models.ImageField(upload_to='profile_images/', null=True, blank=True, default='profile_images/placeholder.png')
+    username = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, default='Default Name')  # Specify a default value here
+    email = models.EmailField()
 
     def __str__(self):
         return self.username

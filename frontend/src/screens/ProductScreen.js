@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToCartAsync } from '../reducers/cartSlice';
 import { fetchProductAsync, selectProduct, selectProductLoading, selectProductError } from '../reducers/productSlice';
 import Rating from '../components/Rating';
-import translationAPI from '../APIS/translationAPI';
+
 
 const ProductScreen = () => {
   const { id } = useParams();
@@ -16,7 +16,7 @@ const ProductScreen = () => {
   const [quantity, setQuantity] = useState(1);
   const [showAlert, setShowAlert] = useState(false);
   const [translatedProduct, setTranslatedProduct] = useState(null);
-  const { selectedLanguage } = useSelector((state) => state.translation);
+
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -33,36 +33,7 @@ const ProductScreen = () => {
     fetchProduct();
   }, [dispatch, id]);
 
-  useEffect(() => {
-    const translateProduct = async () => {
-      if (selectedLanguage && product) {
-        const textsToTranslate = [
-          product.name,
-          product.description,
-          `Price: $${product.price}`,
-          `${product.numReviews} reviews`,
-          `Qty`
-        ];
 
-        try {
-          const translatedTexts = await translationAPI.translateBatch(textsToTranslate, selectedLanguage);
-          const [translatedName, translatedDescription, translatedPrice, translatedReviews, translatedQty] = translatedTexts;
-
-          setTranslatedProduct({
-            name: translatedName || product.name,
-            description: translatedDescription || product.description,
-            price: translatedPrice || `Price: $${product.price}`,
-            reviews: translatedReviews || `${product.numReviews} reviews`,
-            qty: translatedQty || `Qty`,
-          });
-        } catch (error) {
-          console.error("Error translating text:", error);
-        }
-      }
-    };
-
-    translateProduct();
-  }, [selectedLanguage, product]);
 
   const addToCartAsyncHandler = () => {
     dispatch(addToCartAsync({ id: id, quantity }));
@@ -71,6 +42,8 @@ const ProductScreen = () => {
       setShowAlert(false);
     }, 3000);
   };
+
+
 
   return (
     <div>
