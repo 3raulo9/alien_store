@@ -129,7 +129,6 @@ const CartScreen = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-      <AdminScreen></AdminScreen>
     </div>
   );
 };

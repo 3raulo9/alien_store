@@ -28,8 +28,7 @@ function App() {
               <Route path="/cart/" element={<CartScreen/>} />
               <Route path="/profile/" element={<ProfileScreen/>} />
               <Route path="/profile/:id" element={<ProfileScreen />} />
-              <Route path="/adminActions" component={<AdminScreen/>} />
-
+              <Route path="/admin" element={<AdminScreen/>} />
 
               {/* Additional routes as needed */}
             </Routes>

@@ -1,53 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { selectLogged, doLogout } from "../reducers/loginSlice"; // Adjust this import based on where your login slice is located
+import { selectLogged, doLogout, selectToken } from "../reducers/loginSlice"; // Adjust this import based on where your login slice is located
 import { selectCartItems } from "../reducers/cartSlice"; // Adjust based on where your cart slice is located
 import "../assets/css/Sidebar.css";
 import TranslatorButton from "../components/TranslatorButton";
- // Make sure to adjust the path based on your project structure
+// Make sure to adjust the path based on your project structure
 
 const Sidebar = () => {
   const isLogged = useSelector(selectLogged); // Use the selector to get the login state
+  const token = useSelector(selectToken); // Use the selector to get the token
   const cartItems = useSelector(selectCartItems); // Use the selector to get the cart items
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(localStorage.getItem("selectedLanguage") || "");
-
-  // useEffect(() => {
-  //   if (selectedLanguage) {
-  //     translateDOM(document.body, selectedLanguage);
-  //   }
-  // }, [selectedLanguage]);
-
-  // const translateDOM = async (node, language) => {
-  //   const textNodes = [];
-  //   const gatherTextNodes = (node) => {
-  //     if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
-  //       textNodes.push(node);
-  //     } else {
-  //       for (const childNode of node.childNodes) {
-  //         gatherTextNodes(childNode);
-  //       }
-  //     }
-  //   };
-
-  //   gatherTextNodes(node);
-
-  //   const textsToTranslate = textNodes.map((node) => node.textContent.trim());
-  //   if (textsToTranslate.length === 0) return;
-
-  //   try {
-  //     const translatedTexts = await translationAPI.translateBatch(textsToTranslate, language);
-  //     textNodes.forEach((node, index) => {
-  //       node.textContent = translatedTexts[index] || node.textContent;
-  //     });
-  //     localStorage.setItem("translatedTextNodes", JSON.stringify(textNodes.map(node => node.textContent)));
-  //   } catch (error) {
-  //     console.error("Error translating text:", error);
-  //   }
-  // };
 
   const handleProfileClick = () => {
     navigate("/profile"); // Navigate to the profile page
@@ -75,10 +42,7 @@ const Sidebar = () => {
         <div className="line"></div>
       </div>
 
-      <Link
-        to="/"
-        className="brand-logo"
-      >
+      <Link to="/" className="brand-logo">
         <span className="arshop-button">
           <i>Nebuja</i>
         </span>
@@ -86,16 +50,14 @@ const Sidebar = () => {
       <ul className="nav-links">
         <li>
           <Link to="/cart/">
-            <div className="hover-effect link-button" style={{ position: 'relative' }}>
+            <div className="hover-effect link-button" style={{ position: "relative" }}>
               <lord-icon
                 style={lordIconStyle}
                 src="https://cdn.lordicon.com/odavpkmb.json"
                 trigger="hover"
                 colors="primary:#ffffff,secondary:#21d07a"
               ></lord-icon>
-              {totalCartItems > 0 && (
-                <span className="cart-badge">{totalCartItems}</span>
-              )}
+              {totalCartItems > 0 && <span className="cart-badge">{totalCartItems}</span>}
               <div style={{ margin: `${5}px` }}></div>
               <i>CART</i>
             </div>
@@ -136,42 +98,59 @@ const Sidebar = () => {
             </li>
           </>
         ) : (
-          <ul className="nav-links">
-            <Link to="/profile">
-              <div className="hover-effect link-button">
-                <lord-icon
-                  style={lordIconStyle}
-                  src="https://cdn.lordicon.com/kzrjvkoe.json"
-                  colors="primary:#ffffff,secondary:#21d07a"
-                  trigger="hover"
-                ></lord-icon>
-                <div style={{ margin: `${5}px` }}></div>
-                <i>Profile</i>
-              </div>
-            </Link>
-
-            <Link onClick={handleLogout}>
-              <li className="hover-effect">
-                <lord-icon
-                  style={lordIconStyle}
-                  src="https://cdn.lordicon.com/rljrflzd.json"
-                  trigger="hover"
-                  colors="primary:#ffffff,secondary:#21d07a"
-                ></lord-icon>
-                <div style={{ margin: `${5}px` }}></div>
-                <i>LOGOUT</i>
+          <>
+            <li>
+              <Link to="/profile">
+                <div className="hover-effect link-button">
+                  <lord-icon
+                    style={lordIconStyle}
+                    src="https://cdn.lordicon.com/kzrjvkoe.json"
+                    colors="primary:#ffffff,secondary:#21d07a"
+                    trigger="hover"
+                  ></lord-icon>
+                  <div style={{ margin: `${5}px` }}></div>
+                  <i>Profile</i>
+                </div>
+              </Link>
+            </li>
+            <li>
+              <Link onClick={handleLogout}>
+                <div className="hover-effect link-button">
+                  <lord-icon
+                    style={lordIconStyle}
+                    src="https://cdn.lordicon.com/rljrflzd.json"
+                    trigger="hover"
+                    colors="primary:#ffffff,secondary:#21d07a"
+                  ></lord-icon>
+                  <div style={{ margin: `${5}px` }}></div>
+                  <i>LOGOUT</i>
+                </div>
+              </Link>
+            </li>
+            {isLogged && token && (
+              <li>
+                <Link to="/admin">
+                  <div className="hover-effect link-button">
+                    <lord-icon
+                      style={lordIconStyle}
+                      src="https://cdn.lordicon.com/zzcjjxew.json"
+                      trigger="hover"
+                      colors="primary:#ffffff,secondary:#21d07a"
+                    ></lord-icon>
+                    <div style={{ margin: `${5}px` }}></div>
+                    <i>Admin</i>
+                  </div>
+                </Link>
               </li>
-            </Link>
-          </ul>
+            )}
+          </>
         )}
 
         <TranslatorButton />
-        
       </ul>
 
       <div className="promo-message">
-        FOR A LIMITED TIME, ALL ORDERS WILL ENJOY FREE SHIPPING TO PROXIMA
-        CENTAURI. SHOP NOW
+        FOR A LIMITED TIME, ALL ORDERS WILL ENJOY FREE SHIPPING TO PROXIMA CENTAURI. SHOP NOW
       </div>
     </div>
   );

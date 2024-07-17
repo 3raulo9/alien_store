@@ -7,6 +7,10 @@ import { fetchUser, selectUser } from '../reducers/getUserSlice';
 import { register } from '../reducers/registerSlice';
 import NoToken from '../components/NoToken';
 
+import "../assets/css/Forms.css";
+import "../assets/css/ButtonForAll.css";
+import "../assets/css/Loader.css";
+
 const AdminScreen = () => {
   const dispatch = useDispatch();
   const products = useSelector(selectProducts);
@@ -188,6 +192,7 @@ const AdminScreen = () => {
               <Form.Control
                 type="text"
                 name="name"
+                className="textInput"
                 value={formData.name}
                 onChange={handleChange}
               />
@@ -197,6 +202,7 @@ const AdminScreen = () => {
               <Form.Control
                 type="number"
                 name="price"
+                className="textInput"
                 value={formData.price}
                 onChange={handleChange}
               />
@@ -206,6 +212,7 @@ const AdminScreen = () => {
               <Form.Control
                 as="textarea"
                 name="description"
+                className="textInput"
                 value={formData.description}
                 onChange={handleChange}
               />
@@ -215,6 +222,7 @@ const AdminScreen = () => {
               <Form.Control
                 type="text"
                 name="brand"
+                className="textInput"
                 value={formData.brand}
                 onChange={handleChange}
               />
@@ -224,6 +232,7 @@ const AdminScreen = () => {
               <Form.Control
                 type="text"
                 name="category"
+                className="textInput"
                 value={formData.category}
                 onChange={handleChange}
               />
@@ -233,6 +242,7 @@ const AdminScreen = () => {
               <Form.Control
                 type="number"
                 name="countInStock"
+                className="textInput"
                 value={formData.countInStock}
                 onChange={handleChange}
               />
@@ -252,7 +262,7 @@ const AdminScreen = () => {
             </Form.Group>
             <Button
               type="submit"
-              className="mt-3"
+              className="buttonSpecial mt-3"
               disabled={!isFormComplete()}
             >
               {editProductId ? 'Update Product' : 'Add Product'}
@@ -310,6 +320,7 @@ const AdminScreen = () => {
               <Form.Control
                 type="text"
                 name="username"
+                className="textInput"
                 value={userData.username}
                 onChange={handleUserChange}
               />
@@ -319,6 +330,7 @@ const AdminScreen = () => {
               <Form.Control
                 type="email"
                 name="email"
+                className="textInput"
                 value={userData.email}
                 onChange={handleUserChange}
               />
@@ -328,6 +340,7 @@ const AdminScreen = () => {
               <Form.Control
                 type="password"
                 name="password"
+                className="textInput"
                 value={userData.password}
                 onChange={handleUserChange}
               />
@@ -337,11 +350,12 @@ const AdminScreen = () => {
                 type="checkbox"
                 name="is_staff"
                 label="Register as staff"
+                className="form-check"
                 checked={userData.is_staff}
                 onChange={handleUserChange}
               />
             </Form.Group>
-            <Button type="submit" className="mt-3">
+            <Button type="submit" className="buttonSpecial mt-3">
               Register User
             </Button>
           </Form>
