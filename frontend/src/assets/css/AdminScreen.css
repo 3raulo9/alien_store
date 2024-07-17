@@ -1,0 +1,69 @@
+
+
+.form-wrapper {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #21d07a;
+    margin-bottom: 20px;
+}
+
+.textInputWrapper {
+    margin-bottom: 20px;
+}
+
+.textInput {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #21d07a;
+    background: #1e1e1e;
+    color: #b3b3b3;
+}
+
+.textInput::placeholder {
+    color: #b3b3b3;
+}
+
+
+
+.buttonSpecial.secondary {
+    background-color: #505050;
+}
+
+.product-item {
+    background: #1d1d1d;
+    color: #b3b3b3;
+    border: 1px solid #21d07a;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    color: #b3b3b3;
+}
+
+.form-check-input {
+    margin-right: 10px;
+}
+
+.buttonSpecial {
+    background-color: #333333;
+
+}
+
+.checkthing {
+    position: relative;
+    width: 320px; /* Increased width for even larger fields */
+    margin: 12px auto; /* Centering horizontally */
+  }

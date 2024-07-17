@@ -10,6 +10,7 @@ import NoToken from '../components/NoToken';
 import "../assets/css/Forms.css";
 import "../assets/css/ButtonForAll.css";
 import "../assets/css/Loader.css";
+import "../assets/css/AdminScreen.css"; // Custom CSS for AdminScreen
 
 const AdminScreen = () => {
   const dispatch = useDispatch();
@@ -180,185 +181,184 @@ const AdminScreen = () => {
     <div className="container mt-5">
       <Row>
         <Col md={6}>
-          <h2 style={{ color: 'green' }}>Product Management</h2>
-          {productAlert.show && (
-            <Alert variant={productAlert.variant} onClose={() => setProductAlert({ show: false, message: '', variant: '' })} dismissible>
-              {productAlert.message}
-            </Alert>
-          )}
-          <Form onSubmit={editProductId ? handleUpdateProduct : handleAddProduct}>
-            <Form.Group controlId="name">
-              <Form.Label>Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="name"
-                className="textInput"
-                value={formData.name}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="price" className="mt-3">
-              <Form.Label>Price</Form.Label>
-              <Form.Control
-                type="number"
-                name="price"
-                className="textInput"
-                value={formData.price}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="description" className="mt-3">
-              <Form.Label>Description</Form.Label>
-              <Form.Control
-                as="textarea"
-                name="description"
-                className="textInput"
-                value={formData.description}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="brand" className="mt-3">
-              <Form.Label>Brand</Form.Label>
-              <Form.Control
-                type="text"
-                name="brand"
-                className="textInput"
-                value={formData.brand}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="category" className="mt-3">
-              <Form.Label>Category</Form.Label>
-              <Form.Control
-                type="text"
-                name="category"
-                className="textInput"
-                value={formData.category}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="countInStock" className="mt-3">
-              <Form.Label>Count In Stock</Form.Label>
-              <Form.Control
-                type="number"
-                name="countInStock"
-                className="textInput"
-                value={formData.countInStock}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="image" className="mt-3">
-              <Form.Label>Image</Form.Label>
-              {originalImage && (
-                <div className="mb-3">
-                  <Image src={originalImage} alt="Product Image" fluid />
-                </div>
-              )}
-              <Form.Control
-                type="file"
-                name="image"
-                onChange={handleFileChange}
-              />
-            </Form.Group>
-            <Button
-              type="submit"
-              className="buttonSpecial mt-3"
-              disabled={!isFormComplete()}
-            >
-              {editProductId ? 'Update Product' : 'Add Product'}
-            </Button>
-            {editProductId && (
-              <Button
-                variant="secondary"
-                className="mt-3 ms-2"
-                onClick={resetForm}
-              >
-                Go Back
-              </Button>
+          <div className="form-wrapper">
+            <p className="title">Product Management</p>
+            {productAlert.show && (
+              <Alert variant={productAlert.variant} onClose={() => setProductAlert({ show: false, message: '', variant: '' })} dismissible>
+                {productAlert.message}
+              </Alert>
             )}
-          </Form>
+            <form onSubmit={editProductId ? handleUpdateProduct : handleAddProduct} className="form">
+              <div className="textInputWrapper">
+                <input
+                  placeholder="Name"
+                  type="text"
+                  name="name"
+                  className="textInput"
+                  value={formData.name}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="textInputWrapper">
+                <input
+                  placeholder="Price"
+                  type="number"
+                  name="price"
+                  className="textInput"
+                  value={formData.price}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="textInputWrapper">
+                <textarea
+                  placeholder="Description"
+                  name="description"
+                  className="textInput"
+                  value={formData.description}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="textInputWrapper">
+                <input
+                  placeholder="Brand"
+                  type="text"
+                  name="brand"
+                  className="textInput"
+                  value={formData.brand}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="textInputWrapper">
+                <input
+                  placeholder="Category"
+                  type="text"
+                  name="category"
+                  className="textInput"
+                  value={formData.category}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="textInputWrapper">
+                <input
+                  placeholder="Count In Stock"
+                  type="number"
+                  name="countInStock"
+                  className="textInput"
+                  value={formData.countInStock}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="textInputWrapper">
+                <input
+                  placeholder="Image"
+                  type="file"
+                  name="image"
+                  className="textInput"
+                  onChange={handleFileChange}
+                />
+              </div>
+              <button
+                type="submit"
+                className="buttonSpecial"
+                disabled={!isFormComplete()}
+              >
+                {editProductId ? 'Update Product' : 'Add Product'}
+              </button>
+              {editProductId && (
+                <button
+                  type="button"
+                  className="buttonSpecial secondary"
+                  onClick={resetForm}
+                >
+                  Go Back
+                </button>
+              )}
+            </form>
+          </div>
+          <div className="form-wrapper mt-5">
+            <p className="title">Register New User</p>
+            {userAlert.show && (
+              <Alert variant={userAlert.variant} onClose={() => setUserAlert({ show: false, message: '', variant: '' })} dismissible>
+                {userAlert.message}
+              </Alert>
+            )}
+            <form onSubmit={handleRegisterUser} className="form">
+              <div className="textInputWrapper">
+                <input
+                  placeholder="Username"
+                  type="text"
+                  name="username"
+                  className="textInput"
+                  value={userData.username}
+                  onChange={handleUserChange}
+                />
+              </div>
+              <div className="textInputWrapper">
+                <input
+                  placeholder="Email"
+                  type="email"
+                  name="email"
+                  className="textInput"
+                  value={userData.email}
+                  onChange={handleUserChange}
+                />
+              </div>
+              <div className="textInputWrapper">
+                <input
+                  placeholder="Password"
+                  type="password"
+                  name="password"
+                  className="textInput"
+                  value={userData.password}
+                  onChange={handleUserChange}
+                />
+              </div>
+              <div className="checkthing">
+                <label className="form-check">
+                  <input
+                    type="checkbox"
+                    name="is_staff"
+                    className="form-check-input"
+                    checked={userData.is_staff}
+                    onChange={handleUserChange}
+                  />
+                  Register as staff
+                </label>
+              </div>
+              <button type="submit" className="buttonSpecial">
+                Register User
+              </button>
+            </form>
+          </div>
         </Col>
         <Col md={6}>
-          <h2 style={{ color: 'green' }}>Products</h2>
-          <ListGroup>
-            {products.map((product) => (
-              <ListGroup.Item key={product._id}>
-                <Row>
-                  <Col>{product.name}</Col>
-                  <Col>
-                    <Button
-                      variant="warning"
-                      onClick={() => handleEdit(product)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="danger"
-                      onClick={() => handleDelete(product._id)}
-                      className="ms-2"
-                    >
-                      Delete
-                    </Button>
-                  </Col>
-                </Row>
-              </ListGroup.Item>
-            ))}
-          </ListGroup>
-        </Col>
-      </Row>
-      <Row className="mt-5">
-        <Col md={6}>
-          <h2 style={{ color: 'green' }}>Register New User</h2>
-          {userAlert.show && (
-            <Alert variant={userAlert.variant} onClose={() => setUserAlert({ show: false, message: '', variant: '' })} dismissible>
-              {userAlert.message}
-            </Alert>
-          )}
-          <Form onSubmit={handleRegisterUser}>
-            <Form.Group controlId="username">
-              <Form.Label>Username</Form.Label>
-              <Form.Control
-                type="text"
-                name="username"
-                className="textInput"
-                value={userData.username}
-                onChange={handleUserChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="email" className="mt-3">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                className="textInput"
-                value={userData.email}
-                onChange={handleUserChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="password" className="mt-3">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                name="password"
-                className="textInput"
-                value={userData.password}
-                onChange={handleUserChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="is_staff" className="mt-3">
-              <Form.Check
-                type="checkbox"
-                name="is_staff"
-                label="Register as staff"
-                className="form-check"
-                checked={userData.is_staff}
-                onChange={handleUserChange}
-              />
-            </Form.Group>
-            <Button type="submit" className="buttonSpecial mt-3">
-              Register User
-            </Button>
-          </Form>
+          <div className="form-wrapper">
+            <p className="title">Products</p>
+            <ListGroup className="product-list">
+              {products.map((product) => (
+                <ListGroup.Item key={product._id} className="product-item">
+                  <Row>
+                    <Col>{product.name}</Col>
+                    <Col>
+                      <Button
+                        variant="warning"
+                        onClick={() => handleEdit(product)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="danger"
+                        onClick={() => handleDelete(product._id)}
+                        className="ms-2"
+                      >
+                        Delete
+                      </Button>
+                    </Col>
+                  </Row>
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          </div>
         </Col>
       </Row>
     </div>
