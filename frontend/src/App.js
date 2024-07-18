@@ -2,16 +2,15 @@ import React from "react";
 import { Container } from "react-bootstrap";
 import Footer from "./components/Footer";
 import Sidebar from "./components/Sidebar";
-
 import HomeScreen from "./screens/HomeScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import ProductScreen from "./screens/ProductScreen";
-
 import Login from "./screens/Login";
-import { Routes, Route } from "react-router-dom"; // Import Routes and Route directly, not Router
 import CartScreen from "./screens/CartScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import AdminScreen from "./screens/AdminScreen";
+import { Routes, Route } from "react-router-dom";
+import withTranslation from "./hoc/withTranslation"; // Import the HOC
 
 function App() {
   return (
@@ -22,15 +21,13 @@ function App() {
           <Container>
             <Routes>
               <Route path="/" element={<HomeScreen />} exact />
-              <Route path="/login" element={<Login />}  />
+              <Route path="/login" element={<Login />} />
               <Route path="/register" element={<RegisterScreen />} />
               <Route path="/product/:id" element={<ProductScreen />} />
-              <Route path="/cart/" element={<CartScreen/>} />
-              <Route path="/profile/" element={<ProfileScreen/>} />
+              <Route path="/cart/" element={<CartScreen />} />
+              <Route path="/profile/" element={<ProfileScreen />} />
               <Route path="/profile/:id" element={<ProfileScreen />} />
-              <Route path="/adminActions" component={<AdminScreen/>} />
-
-
+              <Route path="/adminActions" element={<AdminScreen />} /> {/* Fix Route here */}
               {/* Additional routes as needed */}
             </Routes>
           </Container>
@@ -41,4 +38,4 @@ function App() {
   );
 }
 
-export default App;
+export default withTranslation(App); // Wrap App component with HOC

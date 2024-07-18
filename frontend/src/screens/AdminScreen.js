@@ -6,6 +6,7 @@ import { selectToken } from '../reducers/loginSlice';
 import { fetchUser, selectUser } from '../reducers/getUserSlice';
 import { register } from '../reducers/registerSlice';
 import NoToken from '../components/NoToken';
+import withTranslation from '../hoc/withTranslation';
 
 const AdminScreen = () => {
   const dispatch = useDispatch();
@@ -351,4 +352,4 @@ const AdminScreen = () => {
   );
 };
 
-export default AdminScreen;
+export default withTranslation(AdminScreen);

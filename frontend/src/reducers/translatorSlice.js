@@ -1,18 +1,20 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { translateBatch as translateBatchAPI } from "../APIS/translationAPI";
+// src/reducers/translatorSlice.js
+
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { translateBatch as translateBatchAPI } from '../APIS/translationAPI';
 
 export const translateBatch = createAsyncThunk(
   'translator/translateBatch',
   async ({ texts, language }) => {
     const response = await translateBatchAPI(texts, language);
-    return response.translated_texts;
+    return response.translated_texts;  
   }
 );
 
 const translatorSlice = createSlice({
   name: 'translator',
   initialState: {
-    selectedLanguage: 'Human lang',
+    selectedLanguage: 'en',
     translatedTexts: [],
   },
   reducers: {
@@ -29,10 +31,12 @@ const translatorSlice = createSlice({
         state.translatedTexts = action.payload;
       })
       .addCase(translateBatch.rejected, (state, action) => {
-        // handle error
+        console.error('Translation error:', action.error.message);
       });
   },
 });
+
+export const selectTranslatedTexts = (state) => state.translator.translatedTexts;
 
 export const { setSelectedLanguage, toggleFontFamily } = translatorSlice.actions;
 

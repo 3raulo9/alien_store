@@ -8,6 +8,7 @@ import "../assets/css/ButtonForAll.css";
 import "../assets/css/Loader.css";
 
 import { Link, useNavigate } from "react-router-dom";
+import withTranslation from "../hoc/withTranslation";
 
 const RegisterScreen = () => {
   const [username, setUsername] = useState("");
@@ -101,4 +102,4 @@ const RegisterScreen = () => {
   );
 };
 
-export default RegisterScreen;
+export default withTranslation(RegisterScreen);

@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToCartAsync } from '../reducers/cartSlice';
 import { fetchProductAsync, selectProduct, selectProductLoading, selectProductError } from '../reducers/productSlice';
 import Rating from '../components/Rating';
+import withTranslation from '../hoc/withTranslation';
 
-
-const ProductScreen = () => {
+const ProductScreen = ({ name, price, reviews, description }) => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const product = useSelector(selectProduct);
@@ -15,8 +15,6 @@ const ProductScreen = () => {
   const error = useSelector(selectProductError);
   const [quantity, setQuantity] = useState(1);
   const [showAlert, setShowAlert] = useState(false);
-  const [translatedProduct, setTranslatedProduct] = useState(null);
-
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -33,8 +31,6 @@ const ProductScreen = () => {
     fetchProduct();
   }, [dispatch, id]);
 
-
-
   const addToCartAsyncHandler = () => {
     dispatch(addToCartAsync({ id: id, quantity }));
     setShowAlert(true);
@@ -42,8 +38,6 @@ const ProductScreen = () => {
       setShowAlert(false);
     }, 3000);
   };
-
-
 
   return (
     <div>
@@ -74,20 +68,24 @@ const ProductScreen = () => {
                 borderTopRightRadius: "30px",
               }}
             >
-              <h3>{translatedProduct ? translatedProduct.name : product.name}</h3>
+              <h3>{loading ? 'Translating...' : (name || product.name)}</h3>
             </ListGroup.Item>
 
             <ListGroup.Item className="product-reviews">
               <Rating
                 value={product.rating}
-                text={translatedProduct ? translatedProduct.reviews : `${product.numReviews} reviews`}
+                text={loading ? 'Translating...' : (reviews || `${product.numReviews} reviews`)}
                 color={"#21d07a"}
               />
             </ListGroup.Item>
 
-            <ListGroup.Item className="product-price">Price: {translatedProduct ? translatedProduct.price : `Price: $${product.price}`}</ListGroup.Item>
+            <ListGroup.Item className="product-price">
+              {loading ? 'Translating...' : (price || `Price: $${product.price}`)}
+            </ListGroup.Item>
 
-            <ListGroup.Item className="product-description">Description: {translatedProduct ? translatedProduct.description : product.description}</ListGroup.Item>
+            <ListGroup.Item className="product-description">
+              {loading ? 'Translating...' : (description || product.description)}
+            </ListGroup.Item>
           </ListGroup>
         </Col>
 
@@ -105,23 +103,19 @@ const ProductScreen = () => {
               >
                 <Col>Price:</Col>
                 <Col>
-                  <strong>{translatedProduct ? translatedProduct.price : `Price: $${product.price}`}</strong>
+                  <strong>{loading ? 'Translating...' : (price || `Price: $${product.price}`)}</strong>
                 </Col>
               </ListGroup.Item>
 
-              <ListGroup.Item
-                style={{ backgroundColor: "white", color: "gray" }}
-              >
+              <ListGroup.Item style={{ backgroundColor: "white", color: "gray" }}>
                 <Col>Status:</Col>
                 <Col>
-                  {product.countInStock > 0 ? "in stock" : "Out of stock"}
+                  {product.countInStock > 0 ? "In stock" : "Out of stock"}
                 </Col>
               </ListGroup.Item>
 
               {product.countInStock > 0 && (
-                <ListGroup.Item
-                  style={{ backgroundColor: "white", color: "gray" }}
-                >
+                <ListGroup.Item style={{ backgroundColor: "white", color: "gray" }}>
                   <Row>
                     <Col className="qty-label">Qty</Col>
                     <Col>
@@ -140,9 +134,7 @@ const ProductScreen = () => {
                 </ListGroup.Item>
               )}
 
-              <ListGroup.Item
-                style={{ backgroundColor: "white", color: "gray" }}
-              >
+              <ListGroup.Item style={{ backgroundColor: "white", color: "gray" }}>
                 <Button
                   className="buttonSpecial"
                   disabled={product.countInStock === 0}
@@ -168,4 +160,4 @@ const ProductScreen = () => {
   );
 };
 
-export default ProductScreen;
+export default withTranslation(ProductScreen);

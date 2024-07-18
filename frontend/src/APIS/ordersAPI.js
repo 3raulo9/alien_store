@@ -11,7 +11,7 @@ export const fetchOrdersAPI = async (token) => {
         Authorization: `Bearer ${token}`
       }
     });
-    return response.data;  // Ensure the response data is returned correctly
+    return response.data;  
   } catch (error) {
     console.error("Error fetching orders:", error);
     throw error;

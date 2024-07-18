@@ -1,11 +1,11 @@
 import React from "react";
 
 const Rating = ({ value, text, color }) => {
-  // Style object for rotating icons
+
   const rotateStyle = {
     color: color,
-    transform: "rotate(90deg)", // Rotate icons 45 degrees
-    textShadow: "0 0 8px rgba(255, 255, 255, 0.3)", // Add glow effect
+    transform: "rotate(90deg)", 
+    textShadow: "0 0 8px rgba(255, 255, 255, 0.3)", 
 
   };
 

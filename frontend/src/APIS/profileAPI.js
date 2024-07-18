@@ -1,15 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://127.0.0.1:8000'; // Replace with your actual API URL
+const API_URL = 'http://127.0.0.1:8000'; 
 
-// export const fetchProfiles = async (token) => {
-//   const response = await axios.get(`${API_URL}/profiles/`, {
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//     },
-//   });
-//   return response.data;
-// };
 
 export const fetchProfile = async (user_id, token) => {
   const response = await axios.get(`${API_URL}/profiles/${user_id}/`, {

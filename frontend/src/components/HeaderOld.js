@@ -47,9 +47,9 @@ const Header = () => {
 
   // Separate style for img tag to prevent redeclaration error
   const imgStyle = {
-    width: "60px", // Adjust width as desired
-    height: "65px", // Adjust height as desired
-    objectFit: "contain", // Preserve aspect ratio without stretching
+    width: "60px", 
+    height: "65px", 
+    objectFit: "contain", 
   };
 
   return (
@@ -62,22 +62,20 @@ const Header = () => {
         </div>
 
         <div className="nav-wrapper">
-          {/* Use Link for navigation to home */}
           <Link
             to="/"
-            className="brand-logo" // Remove the "button" class
+            className="brand-logo" 
             style={{
               marginLeft: "50px",
               color: "#21d07a",
               textShadow:
                 "0 0 0.75px rgba(0, 255, 0, 0.7), 0 0 1.5px rgba(0, 255, 0, 0.5), 0 0 2.25px rgba(0, 255, 0, 0.3)",
-              fontSize: "24px", // Adjust the font size as needed
+              fontSize: "24px", 
             }}
           >
             <span className="arshop-button" style={{ fontSize: "24px" }}>
               ARSHOP
             </span>{" "}
-            {/* Apply the "arshop-button" class */}
           </Link>
 
           <ul id="nav-mobile" className="right hide-on-med-and-down">
@@ -96,7 +94,6 @@ const Header = () => {
             </li>
 
             <li>
-              {/* Use Link for navigation to login */}
               <Link to="/login">
                 <lord-icon
                   style={lordIconStyle}
@@ -110,7 +107,6 @@ const Header = () => {
               </Link>
             </li>
             <li>
-              {/* Use Link for navigation to login */}
               <Link to="/register">
                 <lord-icon
                   style={lordIconStyle}

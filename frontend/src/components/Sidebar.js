@@ -5,53 +5,19 @@ import { selectLogged, doLogout } from "../reducers/loginSlice"; // Adjust this 
 import { selectCartItems } from "../reducers/cartSlice"; // Adjust based on where your cart slice is located
 import "../assets/css/Sidebar.css";
 import TranslatorButton from "../components/TranslatorButton";
- // Make sure to adjust the path based on your project structure
+
 
 const Sidebar = () => {
-  const isLogged = useSelector(selectLogged); // Use the selector to get the login state
-  const cartItems = useSelector(selectCartItems); // Use the selector to get the cart items
+  const isLogged = useSelector(selectLogged); 
+  const cartItems = useSelector(selectCartItems); 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(localStorage.getItem("selectedLanguage") || "");
 
-  // useEffect(() => {
-  //   if (selectedLanguage) {
-  //     translateDOM(document.body, selectedLanguage);
-  //   }
-  // }, [selectedLanguage]);
+useEffect(() => {
+}, [refresh])
 
-  // const translateDOM = async (node, language) => {
-  //   const textNodes = [];
-  //   const gatherTextNodes = (node) => {
-  //     if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
-  //       textNodes.push(node);
-  //     } else {
-  //       for (const childNode of node.childNodes) {
-  //         gatherTextNodes(childNode);
-  //       }
-  //     }
-  //   };
-
-  //   gatherTextNodes(node);
-
-  //   const textsToTranslate = textNodes.map((node) => node.textContent.trim());
-  //   if (textsToTranslate.length === 0) return;
-
-  //   try {
-  //     const translatedTexts = await translationAPI.translateBatch(textsToTranslate, language);
-  //     textNodes.forEach((node, index) => {
-  //       node.textContent = translatedTexts[index] || node.textContent;
-  //     });
-  //     localStorage.setItem("translatedTextNodes", JSON.stringify(textNodes.map(node => node.textContent)));
-  //   } catch (error) {
-  //     console.error("Error translating text:", error);
-  //   }
-  // };
-
-  const handleProfileClick = () => {
-    navigate("/profile"); // Navigate to the profile page
-  };
 
   const lordIconStyle = {
     width: "60px",
@@ -59,12 +25,11 @@ const Sidebar = () => {
   };
 
   const handleLogout = () => {
-    dispatch(doLogout()); // Dispatch the logout action
+    dispatch(doLogout()); 
     navigate("/");
-    setRefresh(!refresh); // Redirect to the home page after logging out
+    setRefresh(!refresh); 
   };
 
-  // Calculate the total number of items in the cart
   const totalCartItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   return (
@@ -103,7 +68,6 @@ const Sidebar = () => {
         </li>
 
         {!isLogged ? (
-          // Show login and register buttons if not logged in
           <>
             <li>
               <Link to="/login">
