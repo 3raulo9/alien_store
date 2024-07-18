@@ -1,4 +1,4 @@
-// src/APIS/translationAPI.js
+const API_URL = process.env.REACT_APP_API_URL;
 
 const translateBatch = async (texts, language) => {
   if (!texts || !language) {
@@ -6,7 +6,7 @@ const translateBatch = async (texts, language) => {
   }
 
   try {
-    const response = await fetch('/translate_batch/', {
+    const response = await fetch(`${API_URL}/translate_batch/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

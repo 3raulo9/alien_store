@@ -1,9 +1,8 @@
-// loginAPI.js
-
 import axios from 'axios';
 
-const LOGIN_API = "http://localhost:3000/login/";
-const LOGOUT_API = "http://localhost:3000/logout/";
+const API_URL = process.env.REACT_APP_API_URL;
+const LOGIN_API = `${API_URL}/login/`;
+const LOGOUT_API = `${API_URL}/logout/`;
 
 export function fetchLogin(credentials) {
     return axios.post(LOGIN_API, credentials, {
@@ -20,4 +19,3 @@ export function fetchLogout(refreshToken) {
     return axios.post(LOGOUT_API, { refresh_token: refreshToken }, {
     });
 }
-

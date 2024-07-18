@@ -1,8 +1,7 @@
-// src/api/ordersAPI.js
-
 import axios from 'axios';
 
-const BASE_URL = '/orders/';
+const API_URL = process.env.REACT_APP_API_URL;
+const BASE_URL = `${API_URL}/orders/`;
 
 export const fetchOrdersAPI = async (token) => {
   try {

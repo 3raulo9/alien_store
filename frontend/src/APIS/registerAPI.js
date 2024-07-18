@@ -1,7 +1,9 @@
-// src/APIS/registerAPI.js
+const API_URL = process.env.REACT_APP_API_URL;
+
 export const registerUser = async (userData) => {
   try {
-    const response = await fetch('register/', {
+    console.log("Sending registration data:", userData);
+    const response = await fetch(`${API_URL}/register/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -10,6 +12,8 @@ export const registerUser = async (userData) => {
     });
 
     if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Registration error details:", errorData);
       throw new Error('Failed to register');
     }
 
