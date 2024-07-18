@@ -7,6 +7,7 @@ import { selectToken } from '../reducers/loginSlice';
 import { fetchUser, selectUser, selectStatus, selectError } from '../reducers/getUserSlice';
 import { fetchOrders, selectOrders, selectOrdersStatus, selectOrdersError } from '../reducers/ordersSlice';
 import NoToken from '../components/NoToken';
+import withTranslation from '../hoc/withTranslation';
 
 const ProfileScreen = () => {
   const { user_id } = useParams(); // Get the user_id from the URL parameters
@@ -217,4 +218,4 @@ const ProfileScreen = () => {
   );
 };
 
-export default ProfileScreen;
+export default withTranslation(ProfileScreen);

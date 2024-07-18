@@ -6,6 +6,7 @@ import { selectToken } from '../reducers/loginSlice';
 import { fetchUser, selectUser } from '../reducers/getUserSlice';
 import { register } from '../reducers/registerSlice';
 import NoToken from '../components/NoToken';
+import withTranslation from '../hoc/withTranslation';
 
 import "../assets/css/Forms.css";
 import "../assets/css/ButtonForAll.css";
@@ -365,4 +366,4 @@ const AdminScreen = () => {
   );
 };
 
-export default AdminScreen;
+export default withTranslation(AdminScreen);

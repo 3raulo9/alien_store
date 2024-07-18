@@ -13,7 +13,6 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('logout/', logout_view, name='logout'),
     path('login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('about/', about, name='about'),
     path('profiles/', ProfileList.as_view(), name='profile-list'),
     path('profiles/<int:user_id>/', ProfileDetail.as_view(), name='profile-detail'),
     path('user/', GetUserView.as_view(), name='get_user'),

@@ -1,20 +1,24 @@
+"""hello"""
 import logging
+import threading
+
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import logout
-from django.http import HttpResponse
-from rest_framework.response import Response
+from rest_framework import generics, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework import status
-from googletrans import Translator
-from .models import Product, CartItem, User, Profile, OrderHistory
-from .serializers import ProductSerializer, ProfileSerializer, UserSerializer, CartItemSerializer, OrderHistorySerializer
-from rest_framework import generics
-import threading
+from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
+from googletrans import Translator
+
+from .models import Product, CartItem, User, Profile, OrderHistory
+from .serializers import (
+    ProductSerializer, ProfileSerializer, UserSerializer,
+    CartItemSerializer, OrderHistorySerializer
+)
 
 # Logger setup
 logger = logging.getLogger(__name__)
@@ -26,14 +30,13 @@ class ProductListCreate(generics.ListCreateAPIView):
     """
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    
     def get(self, request, *args, **kwargs):
         """
         Get the list of products.
         """
         logger.info("Retrieving list of products.")
         return super().get(request, *args, **kwargs)
-    
+
     def post(self, request, *args, **kwargs):
         """
         Create a new product.
@@ -48,26 +51,26 @@ class ProductRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    
+
     def get(self, request, *args, **kwargs):
         """
         Retrieve a product by ID.
         """
-        logger.info(f"Retrieving product with ID {kwargs.get('pk')}.")
+        logger.info("Retrieving product with ID %s.", kwargs.get('pk'))
         return super().get(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
         """
         Update a product by ID.
         """
-        logger.info(f"Updating product with ID {kwargs.get('pk')}.")
+        logger.info("Updating product with ID %s.", kwargs.get('pk'))
         return super().put(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         """
         Delete a product by ID.
         """
-        logger.info(f"Deleting product with ID {kwargs.get('pk')}.")
+        logger.info("Deleting product with ID %s.", kwargs.get('pk'))
         return super().delete(request, *args, **kwargs)
 
 
@@ -78,7 +81,7 @@ def logout_view(request):
     """
     logout(request)
     logger.info("User logged out.")
-    return Response('User logout')
+    return Response('User logged out')
 
 
 class ProfileList(APIView):
@@ -105,7 +108,7 @@ class ProfileList(APIView):
             serializer.save()
             logger.info("Created a new profile.")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        logger.error(f"Failed to create profile: {serializer.errors}")
+        logger.error("Failed to create profile: %s", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -145,10 +148,10 @@ class ProfileDetail(APIView):
         """
         profile = self.get_object(user_id)
         if profile is None:
-            logger.warning(f"Profile with user ID {user_id} does not exist.")
+            logger.warning("Profile with user ID %s does not exist.", user_id)
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = ProfileSerializer(profile)
-        logger.info(f"Retrieved profile for user ID {user_id}.")
+        logger.info("Retrieved profile for user ID %s.", user_id)
         return Response(serializer.data)
 
     def put(self, request, user_id):
@@ -157,18 +160,19 @@ class ProfileDetail(APIView):
         """
         profile = self.get_object(user_id)
         if not profile:
-            profile = Profile.objects.create(user=request.user, username=request.user.username, email=request.user.email)
+            profile = Profile.objects.create(
+                user=request.user,  username=request.user.username, email=request.user.email)
 
         if profile.user != request.user:
-            logger.warning(f"User {request.user.id} attempted to update another user's profile.")
+            logger.warning("User %s attempted to update another user's profile.", request.user.id)
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         serializer = ProfileSerializer(profile, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            logger.info(f"Updated profile for user ID {user_id}.")
+            logger.info("Updated profile for user ID %s.", user_id)
             return Response(serializer.data)
-        logger.error(f"Failed to update profile for user ID {user_id}: {serializer.errors}")
+        logger.error("Failed to update profile for user ID %s: %s", user_id, serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, user_id):
@@ -177,13 +181,13 @@ class ProfileDetail(APIView):
         """
         profile = self.get_object(user_id)
         if profile is None:
-            logger.warning(f"Profile with user ID {user_id} does not exist.")
+            logger.warning("Profile with user ID %s does not exist.", user_id)
             return Response(status=status.HTTP_404_NOT_FOUND)
         if profile.user != request.user:
-            logger.warning(f"User {request.user.id} attempted to delete another user's profile.")
+            logger.warning("User %s attempted to delete another user's profile.", request.user.id)
             return Response(status=status.HTTP_403_FORBIDDEN)
         profile.delete()
-        logger.info(f"Deleted profile for user ID {user_id}.")
+        logger.info("Deleted profile for user ID %s.", user_id)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -193,6 +197,9 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     """
     @classmethod
     def get_token(cls, user):
+        """
+        Override the default token generation to include the username.
+        """
         token = super().get_token(user)
         token['username'] = user.username
         return token
@@ -203,25 +210,6 @@ class MyTokenObtainPairView(TokenObtainPairView):
     Custom JWT token view to use the custom serializer.
     """
     serializer_class = MyTokenObtainPairSerializer
-
-
-@api_view(['GET'])
-def index(req):
-    """
-    A simple hello world endpoint.
-    """
-    logger.info("Visited index page.")
-    return Response('hello')
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def about(req):
-    """
-    An about page only accessible to authenticated users.
-    """
-    logger.info("Visited about page.")
-    return HttpResponse("about")
 
 
 @api_view(['POST'])
@@ -239,94 +227,99 @@ def register(request):
         user.is_staff = request.data.get('is_staff', False)
         user.save()
         refresh = RefreshToken.for_user(user)
-        logger.info(f"User {user.username} registered successfully.")
+        logger.info("User %s registered successfully.", user.username)
         return Response({
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         })
     except Exception as e:
-        logger.error(f"Failed to register user: {str(e)}")
+        logger.error("Failed to register user: %s", str(e))
         return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
 
 
 selected_language = None
 
-
-def perform_translation(sentences, selected_language, results, index):
+def perform_translation(sentences, language, results, index):
     """
     Perform translation for a chunk of sentences.
+
+    Args:
+        sentences (list): A list of sentences to translate.
+        language (str): The target language for translation.
+        results (dict): A dictionary to store the results.
+        index (int): The index for storing results.
     """
     translator = Translator()
-    translations = [translator.translate(sentence, dest=selected_language).text for sentence in sentences]
-    results[index] = " ".join(translations)
+    translations = [translator.translate(sentence, dest=language).text for sentence in sentences]
+    results[index] = translations
 
 
 @api_view(['POST'])
 def translate(request):
     """
     Translate a batch of sentences into the selected language.
+
+    Args:
+        request (Request): The request object containing input texts and the selected language.
+
+    Returns:
+        Response: The translated texts and selected language.
     """
     global selected_language
     if request.method == "POST":
         data = request.data
-        your_sentence = data.get("input_text")
+        input_texts = data.get("input_texts")
         selected_language = data.get('language')
-        
-        if not your_sentence or not selected_language:
-            logger.warning("No text or language provided for translation.")
-            return Response({'error': "No text or language provided"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        sentences = your_sentence.split('. ')
-        num_threads = 20
+
+        if not input_texts or not selected_language:
+            return Response(
+                {'error': "No texts or language provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        sentences = input_texts
+        num_threads = 10000
         chunk_size = max(1, len(sentences) // num_threads)
-        
+
         chunks = [sentences[i * chunk_size:(i + 1) * chunk_size] for i in range(num_threads)]
-        
-        results = {}
-        
+
+        results = [None] * num_threads
+
         threads = []
         for i, chunk in enumerate(chunks):
-            thread = threading.Thread(target=perform_translation, args=(chunk, selected_language, results, i))
+            thread = threading.Thread(
+                target=perform_translation, args=(chunk, selected_language, results, i))
             threads.append(thread)
             thread.start()
-        
+
         for thread in threads:
             thread.join()
-        
-        translated_text = " ".join(results[i] for i in range(num_threads) if i in results)
-        logger.info(f"Translated text to {selected_language}.")
-        return Response({'translated_text': translated_text, 'selected_language': selected_language})
-    
-    logger.warning("Invalid request method for translation.")
-    return Response({'error': "Invalid request method"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+        translated_texts = [text for sublist in results for text in sublist]
+        logger.info("Translated texts to %s.", selected_language)
+        return Response({
+            "translated_texts": translated_texts,
+            "selected_language": selected_language
+        })
 
 @api_view(['POST'])
 def translate_batch(request):
-  """
-  Translate a batch of texts into the selected language.
-  """
-  if request.method == "POST":
-    data = request.data
-    input_texts = data.get("input_texts")
-    selected_language = data.get('language', 'en')  
+    """
+    Translate a batch of texts into the selected language.
+    """
+    if request.method == 'POST':
+        data = request.data
+        input_texts = data.get("input_texts", [])
+        selected_language = data.get("language", 'en')
+        results = []
 
-    if not input_texts or not isinstance(input_texts, list):
-      logger.warning("Invalid texts provided for batch translation.")
-      return Response({'error': "Invalid texts provided"}, status=status.HTTP_400_BAD_REQUEST)
+        translator = Translator()
+        for text in input_texts:
+            translated = translator.translate(text, dest=selected_language).text
+            results.append(translated)
 
-    translator = Translator()
-    translated_texts = []
-    for text in input_texts:
-      translation = translator.translate(text, dest=selected_language)
-      translated_texts.append(translation.text)
+        logger.info("Batch translated texts to %s.", selected_language)
+        return Response({'translated_texts': results})
 
-    logger.info(f"Batch translation completed to {selected_language}.")
-    return Response({'translated_texts': translated_texts, 'selected_language': selected_language})
-  
-  logger.warning("Invalid request method for batch translation.")
-  return Response({'error': "Invalid request method"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
+    return Response({'error': 'Invalid request method'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 class Cart(APIView):
     """
@@ -373,7 +366,7 @@ class Cart(APIView):
         cart_item.delete()
         logger.info(f"Removed item with ID {pk} from the cart.")
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
     def put(self, request, pk):
         """
         Update the quantity of an item in the cart.
@@ -408,7 +401,7 @@ def checkout(request):
     if not cart_items:
         logger.warning("No items in the cart to checkout.")
         return Response({"detail": "No items in cart"}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     # Serialize cart items to store in order history
     cart_items_data = CartItemSerializer(cart_items, many=True).data
 

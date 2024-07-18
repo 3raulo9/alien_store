@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fetchCartItems, addToCart, removeFromCart, checkout } from '../APIS/cartAPI'; 
-import { selectToken } from './loginSlice'; // Assuming login slice has a selectToken selector
+import { selectToken } from './loginSlice'; 
 
 const initialState = {
   items: [],
@@ -29,7 +29,7 @@ export const addToCartAsync = createAsyncThunk(
       const state = getState();
       const token = selectToken(state);
       const response = await addToCart(id, quantity, token);
-      const product = response.data; // Assuming response.data contains the product information
+      const product = response.data; 
       return { product, quantity };
     } catch (error) {
       return rejectWithValue(error.response.data);

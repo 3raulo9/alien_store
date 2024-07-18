@@ -2,9 +2,7 @@
 
 import axios from 'axios';
 
-// Endpoint for login
 const LOGIN_API = "http://localhost:3000/login/";
-// Endpoint for logout - adjust this if your endpoint is different
 const LOGOUT_API = "http://localhost:3000/logout/";
 
 export function fetchLogin(credentials) {

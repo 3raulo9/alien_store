@@ -1,48 +1,51 @@
 // screens/Login.js
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom"; // Use useNavigate instead of useHistory
+import { Link, useNavigate } from "react-router-dom";
 import {
   doLoginAsync,
   doLogout,
   selectUser,
   selectLogged,
   selectLoading,
+  selectError,
 } from "../reducers/loginSlice";
 
-// STYLES AND ICONS
+
 import "../assets/css/Forms.css";
 import "../assets/css/ButtonForAll.css";
 import "../assets/css/icons/LoginIconLayers.css";
 
 import { Col } from "react-bootstrap";
 import Loader from "../components/Loader";
+import withTranslation from "../hoc/withTranslation";
 
 const Login = () => {
   const logged = useSelector(selectLogged);
   const loading = useSelector(selectLoading);
+  const error = useSelector(selectError);  // Get error from state
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Use useNavigate instead of useHistory
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [refresh, setRefresh] = useState(false);
 
   const handleLogin = () => {
     dispatch(doLoginAsync({ username, password }));
-    setRefresh(!refresh)
+    setRefresh(!refresh);
   };
 
   const handleLogout = () => {
     dispatch(doLogout());
-    setRefresh(!refresh)
+    setRefresh(!refresh);
   };
 
   useEffect(() => {
     if (logged) {
-      navigate("/"); // Navigate to HomeScreen when logged in
+      navigate("/");
     }
-  }, [logged, navigate,refresh]);
+  }, [logged, navigate, refresh]);
 
   if (loading) {
     return <Loader />;
@@ -58,7 +61,7 @@ const Login = () => {
             <p className="LoginIconLayers"></p>
           </div>
           <div style={{ margin: `${43}px` }}></div>
-          <hr className="hr hr-blurry" />{" "}
+          <hr className="hr hr-blurry" />
           <button className="buttonSpecial" onClick={handleLogout}>
             LOG OUT
           </button>
@@ -71,7 +74,8 @@ const Login = () => {
             <p className="LoginIconLayers"></p>
           </div>
           <div style={{ margin: `${13}px` }}></div>
-          {loading && <div className="loader"></div>}{" "}
+          {loading && <div className="loader"></div>}
+          {error && <div className="error">{"username or password are incorrect please try again!"}</div>} 
           <div className="textInputWrapper">
             <input
               placeholder="Username"
@@ -91,23 +95,23 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               value={password}
             />
-          </div>{" "}
+          </div>
           <div style={{ margin: `${100}px` }}></div>
           <hr className="hr hr-blurry" />
           <button className="buttonSpecial" onClick={handleLogin}>
             Log In
           </button>
           <p className="signin">
-          <br />
-          doesn't have an account?{" "}
-          <Link style={{ color: "white" }} to="/register">
-            Register
-          </Link>
-        </p>
+            <br />
+            don't have an account?{" "}
+            <Link style={{ color: "white" }} to="/register">
+              Register
+            </Link>
+          </p>
         </div>
       )}
     </div>
   );
 };
 
-export default Login;
+export default withTranslation(Login);

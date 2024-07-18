@@ -3,6 +3,7 @@ import { Card } from "react-bootstrap";
 import Rating from "./Rating";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import withTranslation from "../hoc/withTranslation";
 
 
 const Product = ({ product }) => {
@@ -70,4 +71,4 @@ const Product = ({ product }) => {
   );
 };
 
-export default Product;
+export default withTranslation(Product);

@@ -1,5 +1,5 @@
 import React from "react";
-import "../assets/css/Loader.css"; // Assume you have some CSS for animation
+import "../assets/css/Loader.css"; 
 
 const Loader = () => {
   return (
@@ -8,7 +8,7 @@ const Loader = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "50vh", // This assumes you want to center it vertically in the viewport. Adjust as needed.
+        height: "50vh", 
       }}
     >
       <span className="loader"></span>
