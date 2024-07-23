@@ -14,7 +14,7 @@ export const translateBatch = createAsyncThunk(
 const translatorSlice = createSlice({
   name: 'translator',
   initialState: {
-    selectedLanguage: 'en',
+    selectedLanguage: '',
     translatedTexts: [],
   },
   reducers: {

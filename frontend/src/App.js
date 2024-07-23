@@ -10,7 +10,7 @@ import CartScreen from "./screens/CartScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import AdminScreen from "./screens/AdminScreen";
 import { Routes, Route } from "react-router-dom";
-import withTranslation from "./hoc/withTranslation"; // Import the HOC
+
 
 function App() {
   return (
@@ -38,4 +38,4 @@ function App() {
   );
 }
 
-export default withTranslation(App); // Wrap App component with HOC
+export default App;

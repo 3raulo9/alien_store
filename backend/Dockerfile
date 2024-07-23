@@ -1,44 +1,18 @@
-# Stage 1: Build React frontend
-FROM node:18 AS build
+# Use the official Python image from the Docker Hub
+FROM python:3.9
 
-# Set working directory
-WORKDIR /frontend
-
-# Copy React app source code
-COPY frontend/package.json frontend/package-lock.json ./
-RUN npm install
-
-# Copy React app source code
-COPY frontend/ ./
-
-# Build the React app
-RUN npm run build
-
-# Stage 2: Build Django backend
-FROM python:3.11 AS django
-
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Set working directory
+# Set the working directory in the container
 WORKDIR /app
 
 # Install dependencies
-COPY backend/requirements.txt /app/
+COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy Django project
-COPY backend/ /app/
+# Copy the rest of the application code
+COPY . /app/
 
-# Collect static files
-RUN python manage.py collectstatic --noinput
-
-# Copy built React app to Django static files directory
-COPY --from=build /frontend/build /app/static
-
-# Expose port 8000
+# Expose port 8000 for the Django application
 EXPOSE 8000
 
-# Start the server
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "myproj.wsgi:application"]
+# Run the Django development server
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
