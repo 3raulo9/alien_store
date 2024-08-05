@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { translateBatch, selectTranslatedTexts, setSelectedLanguage } from '../reducers/translatorSlice';
+import { translateBatch, selectTranslatedTexts } from '../reducers/translatorSlice';
 
 const withTranslation = (WrappedComponent) => {
   return (props) => {

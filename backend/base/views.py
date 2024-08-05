@@ -276,7 +276,7 @@ def translate(request):
                 {'error': "No texts or language provided"}, status=status.HTTP_400_BAD_REQUEST)
 
         sentences = input_texts
-        num_threads = 10000
+        num_threads = 50
         chunk_size = max(1, len(sentences) // num_threads)
 
         chunks = [sentences[i * chunk_size:(i + 1) * chunk_size] for i in range(num_threads)]

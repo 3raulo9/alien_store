@@ -6,6 +6,7 @@ import { Row, Col, ListGroup, Image, Button, Card, Modal } from 'react-bootstrap
 import NoToken from '../components/NoToken';
 import Pay from '../components/Pay';
 import withTranslation from '../hoc/withTranslation';
+import AdminScreen from '../screens/AdminScreen'
 
 const CartScreen = () => {
   const dispatch = useDispatch();
@@ -50,6 +51,7 @@ const CartScreen = () => {
 
   return (
     <div>
+      <AdminScreen></AdminScreen>
       <h1 style={{ color: 'green' }}>Shopping Cart</h1>
       {loading ? (
         <p>Loading...</p>
